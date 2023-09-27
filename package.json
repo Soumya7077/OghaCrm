@@ -37,6 +37,7 @@
     "jquery": "^3.7.0",
     "mdb-react-ui-kit": "^6.2.0",
     "mongodb": "^5.7.0",
+    "mongoose": "^7.5.3",
     "nodemailer": "^6.9.4",
     "react": "^18.2.0",
     "react-chartjs-2": "^4.3.1",
