@@ -1,0 +1,59 @@
+.App {
+    text-align: center;
+  }
+  
+  .App-header {
+    background-color: #ebedef;
+    padding: 20px;
+    color: black;
+  }
+  
+  .category-tabs {
+    display: flex;
+    justify-content: center;
+    margin-top: 20px;
+  }
+  
+  .category-tab {
+    margin: 0 15px;
+    padding: 5px 10px;
+    cursor: pointer;
+    font-size: 18px;
+  }
+  
+  .category-tab.active {
+    border-bottom: 2px solid #007bff;
+  }
+  
+  .GymContent,
+.SalonContent,
+.SpaContent,
+.AestheticContent {
+  display: none; /* Hide content by default */
+}
+
+  .category-tab:hover {
+    text-decoration: none;
+    color: #555; /* Text color on hover */
+    transform: translateY(-2px); /* Slight lift on hover */
+  }
+
+
+  .GymContent.active,
+  .SalonContent.active,
+  .SpaContent.active,
+  .AestheticContent.active {
+    display: block; /* Show active content */
+  }
+
+  
+  
+  
+  
+  
+  
+
+  /* .category-tab:hover {
+    text-decoration: underline;
+  } */
+  

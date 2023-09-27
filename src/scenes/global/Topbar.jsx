@@ -1,51 +1,102 @@
+import React, { useEffect, useState } from "react";
 import { Box, IconButton, useTheme } from "@mui/material";
 import { useContext } from "react";
-import { ColorModeContext, tokens } from "../../theme";
-import InputBase from "@mui/material/InputBase";
-import LightModeOutlinedIcon from "@mui/icons-material/LightModeOutlined";
-import DarkModeOutlinedIcon from "@mui/icons-material/DarkModeOutlined";
 import NotificationsOutlinedIcon from "@mui/icons-material/NotificationsOutlined";
-import SettingsOutlinedIcon from "@mui/icons-material/SettingsOutlined";
 import PersonOutlinedIcon from "@mui/icons-material/PersonOutlined";
-import SearchIcon from "@mui/icons-material/Search";
+import { useCookies } from "react-cookie";
+import { Link, useNavigate } from "react-router-dom";
 
 const Topbar = () => {
   const theme = useTheme();
-  const colors = tokens(theme.palette.mode);
-  const colorMode = useContext(ColorModeContext);
+
+
+
+  const [isDropdownOpen, setIsDropdownOpen] = useState(false);
+  const [cookie, setCookie, removeCookie] = useCookies();
+  const navigate = useNavigate();
+  const [style, setStyle] =  useState({display:'none'});
+
+  const toggleDropdown = () => {
+    setIsDropdownOpen(!isDropdownOpen);
+  };
+
+  const LogoutClick = () => {
+      removeCookie("staffType");
+      removeCookie("staffId");
+      navigate("/");
+  }
+
+  useEffect(() => {
+    if(cookie["staffType"] == 8){
+      setStyle({display:'block'});
+    }
+  },[cookie["staffType"]]);
 
   return (
-    <Box display="flex" justifyContent="space-between" p={2}>
+    <Box display="flex"  justifyContent="space-between" p={2} sx={{backgroundColor:'#ebedef',}}>
       {/* SEARCH BAR */}
       <Box
         display="flex"
-        backgroundColor={colors.primary[400]}
+        // backgroundColor={''}
         borderRadius="3px"
       >
-        <InputBase sx={{ ml: 2, flex: 1 }} placeholder="Search" />
-        <IconButton type="button" sx={{ p: 1 }}>
-          <SearchIcon />
-        </IconButton>
       </Box>
 
       {/* ICONS */}
-      <Box display="flex">
-        <IconButton onClick={colorMode.toggleColorMode}>
-          {theme.palette.mode === "dark" ? (
-            <DarkModeOutlinedIcon />
-          ) : (
-            <LightModeOutlinedIcon />
-          )}
-        </IconButton>
-        <IconButton>
+      <Box display="flex" position="relative">
+        {/* <IconButton sx={{ color: "black" }} onClick={toggleDropdown} onMouseLeave={() => setIsDropdownOpen(false)}>
           <NotificationsOutlinedIcon />
-        </IconButton>
-        <IconButton>
-          <SettingsOutlinedIcon />
-        </IconButton>
-        <IconButton>
+        </IconButton> */}
+        <IconButton
+          sx={{ color: "black" }}
+          onClick={toggleDropdown}
+          // onMouseOver={toggleDropdown}
+        >
           <PersonOutlinedIcon />
         </IconButton>
+        {isDropdownOpen && (
+          <div
+            style={{
+              position: "absolute",
+              top: "100%",
+              right: 0,
+              backgroundColor: "#fff",
+              boxShadow: "0px 4px 8px rgba(0, 0, 0, 0.1)",
+              borderRadius: "4px",
+              zIndex: 1000,
+            }}
+          >
+            <ul
+              style={{
+                listStyle: "none",
+                margin: 0,
+                padding: 0,
+              }}
+            >
+              <li
+                style={{
+                  padding: "10px 20px",
+                  color: "#333",
+                  borderBottom: "1px solid #eee",
+                  cursor: "pointer",
+                  transition: "background-color 0.2s",
+                }}
+              >
+                <Link style={style} to= {`/editstaff/${cookie["staffId"]}`} className="btn">Profile</Link>
+              </li>
+              <li
+                style={{
+                  padding: "10px 20px",
+                  color: "#333",
+                  cursor: "pointer",
+                  transition: "background-color 0.2s",
+                }}
+              >
+                <button className="btn" onClick={LogoutClick}>Logout</button>
+              </li>
+            </ul>
+          </div>
+        )}
       </Box>
     </Box>
   );

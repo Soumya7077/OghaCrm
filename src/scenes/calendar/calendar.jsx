@@ -13,11 +13,9 @@ import {
   useTheme,
 } from "@mui/material";
 import Header from "../../components/Header";
-import { tokens } from "../../theme";
 
 const Calendar = () => {
   const theme = useTheme();
-  const colors = tokens(theme.palette.mode);
   const [currentEvents, setCurrentEvents] = useState([]);
 
   const handleDateClick = (selected) => {
@@ -54,7 +52,7 @@ const Calendar = () => {
         {/* CALENDAR SIDEBAR */}
         <Box
           flex="1 1 20%"
-          backgroundColor={colors.primary[400]}
+          backgroundColor='gray'
           p="15px"
           borderRadius="4px"
         >
@@ -64,7 +62,7 @@ const Calendar = () => {
               <ListItem
                 key={event.id}
                 sx={{
-                  backgroundColor: colors.greenAccent[500],
+                  backgroundColor: 'gray',
                   margin: "10px 0",
                   borderRadius: "2px",
                 }}

@@ -1,12 +1,11 @@
 import { useTheme } from "@mui/material";
 import { ResponsiveChoropleth } from "@nivo/geo";
 import { geoFeatures } from "../data/mockGeoFeatures";
-import { tokens } from "../theme";
 import { mockGeographyData as data } from "../data/mockData";
 
 const GeographyChart = ({ isDashboard = false }) => {
   const theme = useTheme();
-  const colors = tokens(theme.palette.mode);
+  
   return (
     <ResponsiveChoropleth
       data={data}
@@ -14,27 +13,27 @@ const GeographyChart = ({ isDashboard = false }) => {
         axis: {
           domain: {
             line: {
-              stroke: colors.grey[100],
+              stroke: 'white',
             },
           },
           legend: {
             text: {
-              fill: colors.grey[100],
+              fill: 'white',
             },
           },
           ticks: {
             line: {
-              stroke: colors.grey[100],
+              stroke: 'white',
               strokeWidth: 1,
             },
             text: {
-              fill: colors.grey[100],
+              fill: 'white',
             },
           },
         },
         legends: {
           text: {
-            fill: colors.grey[100],
+            fill: 'white',
           },
         },
       }}
@@ -62,7 +61,7 @@ const GeographyChart = ({ isDashboard = false }) => {
                 itemWidth: 94,
                 itemHeight: 18,
                 itemDirection: "left-to-right",
-                itemTextColor: colors.grey[100],
+                itemTextColor: 'white',
                 itemOpacity: 0.85,
                 symbolSize: 18,
                 effects: [

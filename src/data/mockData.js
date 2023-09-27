@@ -1,4 +1,7 @@
-import { tokens } from "../theme";
+
+
+
+
 
 export const mockDataTeam = [
   {
@@ -7,6 +10,7 @@ export const mockDataTeam = [
     email: "jonsnow@gmail.com",
     age: 35,
     phone: "(665)121-5454",
+    address: "Hyderabad",
     access: "admin",
   },
   {
@@ -86,6 +90,20 @@ export const mockDataContacts = [
     city: "New York",
     zipCode: "10001",
     registrarId: 123512,
+    job:"Software developer",
+    source:"Google Ads",
+    interested:"Interested",
+    startdate:'12-09-2012',
+    subscription:'Prermium',
+    remaining:'100',
+    for:'Gym',
+    paid:10000,
+    intime:"9:30 am",
+    outtime:'12:30 pm',
+    followup: "03/12/2018",
+    nextfollowup:"08/12/2018",
+    remarks:"It's very Good",
+    trainer:"Jon"
   },
   {
     id: 2,
@@ -97,6 +115,20 @@ export const mockDataContacts = [
     city: "New York",
     zipCode: "13151",
     registrarId: 123512,
+    job:"Software developer",
+    source:"Google Ads",
+    interested:"Interested",
+    startdate:'12-03-2022',
+    subscription:'Starter',
+    remaining:'100',
+    for:'Spa',
+    paid:1000,
+    intime:"6:30 am",
+    outtime:'8:30 am',
+    followup: "12/12/2012",
+    nextfollowup:"21/12/2012",
+    remarks:"It's very Good",
+    trainer:"Shon"
   },
   {
     id: 3,
@@ -108,6 +140,20 @@ export const mockDataContacts = [
     city: "New York",
     zipCode: "87281",
     registrarId: 4132513,
+    job:"Doctor",
+    source:"Facebook",
+    startdate:'12-09-2021',
+    interested:"Interested",
+    subscription:'Prermium',
+    remaining:'400',
+    for:'Gym',
+    paid:10000,
+    intime:"4:30 pm",
+    outtime:'6:30 pm',
+    followup: "10/12/2022",
+    nextfollowup:"18/12/2022",
+    remarks:"It's very Good",
+    trainer:"Pradip"
   },
   {
     id: 4,
@@ -119,6 +165,20 @@ export const mockDataContacts = [
     city: "New York",
     zipCode: "15551",
     registrarId: 123512,
+    job:"Teacher",
+    source:"Linkedin",
+    startdate:'01-09-2022',
+    interested:"Interested",
+    subscription:'Basic',
+    remaining:'70',
+    for:'Salon',
+    paid:1000,
+    intime:"7:30 am",
+    outtime:'9:30 am',
+    followup: "03/12/2012",
+    nextfollowup:"08/12/2012",
+    remarks:"It's very Good",
+    trainer:"Vishal"
   },
   {
     id: 5,
@@ -130,6 +190,20 @@ export const mockDataContacts = [
     city: "Tenting",
     zipCode: "14215",
     registrarId: 123512,
+    job:"Software developer",
+    source:"News Paper",
+    startdate:'12-09-2021',
+    interested:"Not Interested",
+    subscription:'Professional',
+    remaining:'100',
+    for:'Salon',
+    paid:1000,
+    intime:"9:30 am",
+    outtime:'12:30 pm',
+    followup: "03/12/2012",
+    nextfollowup:"08/12/2012",
+    remarks:"It's very Nice",
+    trainer:"Vishal"
   },
   {
     id: 6,
@@ -141,6 +215,20 @@ export const mockDataContacts = [
     city: "Esvazark",
     zipCode: "10001",
     registrarId: 123512,
+    job:"Software developer",
+    source:"News Paper",
+    startdate:'10-09-2012',
+    interested:"Interested",
+    subscription:'Basic',
+    remaining:'100',
+    for:'Gym',
+    paid:10000,
+    intime:"12:20 pm",
+    outtime:'01:30 pm',
+    followup: "03/12/2012",
+    nextfollowup:"08/12/2012",
+    remarks:"It's very Nice",
+    trainer:"Jon"
   },
   {
     id: 7,
@@ -152,6 +240,20 @@ export const mockDataContacts = [
     city: "Evertin",
     zipCode: "51523",
     registrarId: 123512,
+    job:"Teacher",
+    source:"News Paper",
+    startdate:'12-09-2020',
+    interested:"Interested",
+    subscription:'Starter',
+    remaining:'100',
+    for:'Gym',
+    paid:10000,
+    intime:"9:30 am",
+    outtime:'12:30 pm',
+    followup: "03/12/2012",
+    nextfollowup:"08/12/2012",
+    remarks:"It's very Nice",
+    trainer:"Jon"
   },
   {
     id: 8,
@@ -163,6 +265,20 @@ export const mockDataContacts = [
     city: "Esteras",
     zipCode: "44215",
     registrarId: 512315,
+    job:"Doctor",
+    source:"News Paper",
+    interested:"Interested",
+    startdate:'12-09-2020',
+    subscription:'Prermium',
+    remaining:'400',
+    for:'Gym',
+    paid:1000,
+    intime:"9:30 am",
+    outtime:'12:30 pm',
+    followup: "03/12/2012",
+    nextfollowup:"08/12/2012",
+    remarks:"It's very Nice",
+    trainer:"Pradip"
   },
   {
     id: 9,
@@ -174,6 +290,20 @@ export const mockDataContacts = [
     city: "Colunza",
     zipCode: "111234",
     registrarId: 928397,
+    job:"Teacher",
+    source:"News Paper",
+    interested:"Interested",
+    startdate:'12-09-2015',
+    subscription:'Starter',
+    remaining:'100',
+    for:'Gym',
+    paid:1000,
+    intime:"9:30 am",
+    outtime:'12:30 pm',
+    followup: "03/12/2012",
+    nextfollowup:"08/12/2012",
+    remarks:"It's very Nice",
+    trainer:"Vishal"
   },
   {
     id: 10,
@@ -185,6 +315,20 @@ export const mockDataContacts = [
     city: "Esteras",
     zipCode: "44215",
     registrarId: 533215,
+    job:"Teacher",
+    source:"News Paper",
+    startdate:'12-09-2012',
+    interested:"Interested",
+    subscription:'Basic',
+    remaining:'100',
+    for:'Gym',
+    paid:1000,
+    intime:"9:30 am",
+    outtime:'12:30 pm',
+    followup: "03/12/2012",
+    nextfollowup:"08/12/2012",
+    remarks:"It's very Nice",
+    trainer:"Jon"
   },
   {
     id: 11,
@@ -196,74 +340,57 @@ export const mockDataContacts = [
     city: "Colunza",
     zipCode: "1234",
     registrarId: 92197,
+    job:"Teacher",
+    source:"News Paper",
+    startdate:'12-09-2012',
+    interested:"Interested",
+    subscription:'Prermium',
+    remaining:'100',
+    for:'Gym',
+    paid:1000,
+    intime:"9:30 am",
+    outtime:'12:30 pm',
+    followup: "03/12/2012",
+    nextfollowup:"08/12/2012",
+    remarks:"It's very Nice",
+    trainer:"Jon"
   },
 ];
 
-export const mockDataInvoices = [
+export const mockDataFollowup = [
   {
     id: 1,
     name: "Jon Snow",
     email: "jonsnow@gmail.com",
     cost: "21.24",
+    address:"Hyderabad",
     phone: "(665)121-5454",
-    date: "03/12/2022",
+    followup: "03/12/2012",
+    nextfollowup:"08/12/2012",
   },
   {
     id: 2,
-    name: "Cersei Lannister",
-    email: "cerseilannister@gmail.com",
-    cost: "1.24",
-    phone: "(421)314-2288",
-    date: "06/15/2021",
+    name: "Jon Snow",
+    email: "jonsnow@gmail.com",
+    cost: "21.24",
+    address:"Hyderabad",
+    phone: "(665)121-5454",
+    followup: "04/11/2022",
+    nextfollowup: "03/12/2012",
   },
   {
     id: 3,
-    name: "Jaime Lannister",
-    email: "jaimelannister@gmail.com",
-    cost: "11.24",
-    phone: "(422)982-6739",
-    date: "05/02/2022",
-  },
-  {
-    id: 4,
-    name: "Anya Stark",
-    email: "anyastark@gmail.com",
-    cost: "80.55",
-    phone: "(921)425-6742",
-    date: "03/21/2022",
-  },
-  {
-    id: 5,
-    name: "Daenerys Targaryen",
-    email: "daenerystargaryen@gmail.com",
-    cost: "1.24",
-    phone: "(421)445-1189",
-    date: "01/12/2021",
-  },
-  {
-    id: 6,
-    name: "Ever Melisandre",
-    email: "evermelisandre@gmail.com",
-    cost: "63.12",
-    phone: "(232)545-6483",
-    date: "11/02/2022",
-  },
-  {
-    id: 7,
-    name: "Ferrara Clifford",
-    email: "ferraraclifford@gmail.com",
-    cost: "52.42",
-    phone: "(543)124-0123",
-    date: "02/11/2022",
-  },
-  {
-    id: 8,
-    name: "Rossini Frances",
-    email: "rossinifrances@gmail.com",
+    name: "Jon Snow",
+    email: "jonsnow@gmail.com",
     cost: "21.24",
-    phone: "(222)444-5555",
-    date: "05/02/2021",
+    address:"Hyderabad",
+    phone: "(665)121-5454",
+    followup: "28/10/2022",
+    nextfollowup: "04/11/2022",
   },
+  
+ 
+  
 ];
 
 export const mockTransactions = [
@@ -433,7 +560,7 @@ export const mockPieData = [
 export const mockLineData = [
   {
     id: "japan",
-    color: tokens("dark").greenAccent[500],
+    color: 'white',
     data: [
       {
         x: "plane",
@@ -487,7 +614,7 @@ export const mockLineData = [
   },
   {
     id: "france",
-    color: tokens("dark").blueAccent[300],
+    color: 'white',
     data: [
       {
         x: "plane",
@@ -541,7 +668,7 @@ export const mockLineData = [
   },
   {
     id: "us",
-    color: tokens("dark").redAccent[200],
+    color: 'white',
     data: [
       {
         x: "plane",

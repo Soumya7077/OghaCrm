@@ -1,0 +1,49 @@
+/* CreateUserForm.css */
+
+.create-user-form {
+    background-color: #f4f6f9;
+    color: black;
+  }
+  
+  .create-user-form h2 {
+    color: #2c3e50;
+  }
+  
+  .create-user-form label {
+    font-weight: bold;
+  }
+  
+  .create-user-form .form-control {
+    border: none;
+    border-radius: 10px;
+    padding: 10px;
+    background-color: #ffffff;
+    box-shadow: 0 3px 8px rgba(0, 0, 0, 0.1);
+    transition: box-shadow 0.3s ease-in-out;
+  }
+  
+  .create-user-form .form-control:focus {
+    box-shadow: 0 3px 10px rgba(0, 0, 0, 0.2);
+  }
+  
+  .create-user-form .btn-primary {
+    background-color: #3498db;
+    border: none;
+    border-radius: 10px;
+    padding: 8px 20px;
+  }
+  
+  .create-user-form .btn-secondary {
+    background-color: #95a5a6;
+    border: none;
+    border-radius: 10px;
+    padding: 8px 20px;
+  }
+  
+  /* Media query for mobile responsiveness */
+  @media (max-width: 576px) {
+    .create-user-form {
+      padding: 20px;
+    }
+  }
+  
