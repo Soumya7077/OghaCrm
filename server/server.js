@@ -46,7 +46,10 @@ const leadsCaptureSchema = new mongoose.Schema({
   CreatedOn:Date,
   folloupDateTime:Date,
   isInterested:String,
-  Remark:String
+  Remark:String,
+  CreatedBy:String,
+  ModifiedBy:String,
+  ModifiedOn:Date
 });
 
 const staffManageSchema = new mongoose.Schema({
@@ -159,12 +162,14 @@ app.post("/addlead", (req, res) => {
 app.get("/leadscapture", async (req, res) => {
   try {
     const leads = await leadsCapture.find({ IsActive: 1, type: "Lead" });
+    console.log("Found leads:", leads); // Log the leads variable
     res.send(leads);
   } catch (error) {
     console.error("Error retrieving leads:", error);
     res.status(500).json({ error: "An error occurred" });
   }
 });
+
 
 // Leads Followup Get Method
 
