@@ -335,61 +335,39 @@ app.get("/followupdetails/:id", async (req, res) => {
 
 // After clicking the 'Edit' button, the specific lead data is displayed in the edit form
 
-app.get("/leadscapture/:id", (req, res) => {
-  var EditId = parseInt(req.params.id);
-  mongoose.connect(connectionString).then((clientObject) => {
-    var database = clientObject.db("Ogha");
-    database
-      .collection("leadsCapture")
-      .find({ id: EditId })
-      .toArray()
-      .then((document) => {
-        res.send(document);
-        res.end();
-      });
-  });
+app.get("/leadscapture/:id", async (req, res) => {
+  try {
+    const EditId = parseInt(req.params.id);
+
+    const leadDetails = await leadsCapture.find({ id: EditId });
+
+    res.send(leadDetails);
+  } catch (error) {
+    console.error("Error retrieving lead details:", error);
+    res.status(500).json({ error: "An error occurred" });
+  }
 });
-app.get("/leadscaptureforedit/:id", (req, res) => {
-  var EditId = parseInt(req.params.id);
-  mongoose
-    .connect(connectionString)
-    .then((clientObject) => {
-      var database = clientObject.db("Ogha");
 
-      const query1 = database
-        .collection("leadsCapture")
-        .find({ id: EditId })
-        .toArray();
-      const query2 = database
-        .collection("leadsFollowup")
-        .find({ leadId: EditId })
-        .toArray();
 
-      Promise.all([query1, query2])
-        .then((results) => {
-          const [result1, result2] = results;
+app.get("/leadscaptureforedit/:id", async (req, res) => {
+  try {
+    const EditId = parseInt(req.params.id);
 
-          const combinedResults = {
-            leadsCapture: result1,
-            leadsFollowup: result2,
-          };
+    const [leadDetails, followupDetails] = await Promise.all([
+      leadsCapture.find({ id: EditId }).exec(),
+      leadsFollowup.find({ leadId: EditId }).exec(),
+    ]);
 
-          res.send(combinedResults);
-          res.end();
-        })
-        .catch((err) => {
-          console.error(err);
-          res.status(500).send("Internal Server Error");
-        })
-        .finally(() => {
-          // Close the MongoDB connection
-          clientObject.close();
-        });
-    })
-    .catch((err) => {
-      console.error(err);
-      res.status(500).send("Internal Server Error");
-    });
+    const combinedResults = {
+      leadsCapture: leadDetails,
+      leadsFollowup: followupDetails,
+    };
+
+    res.send(combinedResults);
+  } catch (error) {
+    console.error("Error retrieving lead details:", error);
+    res.status(500).json({ error: "An error occurred" });
+  }
 });
 
 // app.get("/leadscapture/:id", (req, res) => {
@@ -432,13 +410,13 @@ app.get("/leadscaptureforedit/:id", (req, res) => {
 
 // The edit form displays the data for updating.
 
-app.put("/updatelead/:id", (req, res) => {
-  var id = parseInt(req.params.id);
+app.put("/updatelead/:id", async (req, res) => {
+  try {
+    const id = parseInt(req.params.id);
+    const folloupDateTime = new Date(req.body.folloupDateTime);
 
-  mongoose.connect(connectionString).then((clientObject) => {
-    var findQuery = { id: id };
-    var fiedFollowupQuery = { leadId: id };
-    var updateQuery = {
+    // Update lead details
+    const leadUpdateQuery = {
       $set: {
         fullName: req.body.fullName,
         phoneNumber: req.body.phoneNumber,
@@ -447,103 +425,105 @@ app.put("/updatelead/:id", (req, res) => {
         address: req.body.address,
         source: req.body.source,
         isInterested: req.body.isInterested,
-        folloupDateTime: new Date(req.body.folloupDateTime),
+        folloupDateTime: folloupDateTime,
       },
     };
 
-    var folloupDateTime = new Date(req.body.folloupDateTime);
+    const leadUpdateResult = await leadsCapture.updateOne({ id: id }, leadUpdateQuery);
 
-    var updateFollowupQuery = {
+    // Update follow-up details
+    const followupUpdateQuery = {
       $set: {
         criteria: req.body.isInterested,
         folloupDateTime: folloupDateTime,
         remarks: req.body.remark,
-        // CreatedOn: CreatedOn,
         IsActive: 1,
       },
     };
-    var database = clientObject.db("Ogha");
-    database
-      .collection("leadsCapture")
-      .updateOne(findQuery, updateQuery)
-      .then((result) => {
-        console.log("User Updated");
-        res.redirect("/leadscapture");
-        res.end();
-      });
 
-    database
-      .collection("leadsFollowup")
-      .updateOne(fiedFollowupQuery, updateFollowupQuery)
-      .then((result) => {
-        console.log("User Updated");
-        // res.redirect("/leadscapture");
-        res.end();
-      });
-  });
+    const followupUpdateResult = await leadsFollowup.updateOne({ leadId: id }, followupUpdateQuery);
+
+    if (leadUpdateResult.nModified > 0 || followupUpdateResult.nModified > 0) {
+      console.log("Lead Updated");
+      res.status(200).json({ message: "Lead Updated" });
+    } else {
+      console.log("No changes made to lead");
+      res.status(200).json({ message: "No changes made to lead" });
+    }
+  } catch (error) {
+    console.error("Error updating lead:", error);
+    res.status(500).json({ error: "An error occurred while updating the lead" });
+  }
 });
 
 // Update Leads to Walkin on the basis of phone no
 
-app.put("/updateleadstowalkin/:id", (req, res) => {
-  var phone = req.params.id;
-  var type = req.body.type;
-  var remark = req.body.remark;
-  var findQuery = { phoneNumber: phone };
-  var updateQuery = { $set: { type: type, Remark: remark } };
-  mongoose.connect(connectionString).then((clientObject) => {
-    var database = clientObject.db("Ogha");
-    database
-      .collection("leadsCapture")
-      .updateOne(findQuery, updateQuery)
-      .then((result) => {
-        console.log("Leads updated to Walkin");
-      });
-  });
+app.put("/updateleadstowalkin/:id", async (req, res) => {
+  try {
+    const phone = req.params.id;
+    const type = req.body.type;
+    const remark = req.body.remark;
+    
+    const findQuery = { phoneNumber: phone };
+    const updateQuery = { $set: { type: type, Remark: remark } };
+
+    // Update leads to "Walkin" type
+    const updateResult = await leadsCapture.updateOne(findQuery, updateQuery);
+
+    if (updateResult.nModified > 0) {
+      console.log("Leads updated to Walkin");
+      res.status(200).json({ message: "Leads updated to Walkin" });
+    } else {
+      console.log("No leads found or no changes made");
+      res.status(404).json({ error: "No leads found or no changes made" });
+    }
+  } catch (error) {
+    console.error("Error updating leads to Walkin:", error);
+    res.status(500).json({ error: "An error occurred while updating leads" });
+  }
 });
 
-app.put("/deletelead/:leadid", (req, res) => {
-  var id = parseInt(req.params.leadid);
+// Deleting Lead Details by updating IsActive to 0.
 
-  mongoose.connect(connectionString).then((clientObject) => {
-    var findQuery = { id: id };
-    var updateQuery = {
-      $set: { IsActive: parseInt(req.body.IsActive) }, // , ModifiedBy:req.body.ModifiedBy, ModifiedOn:new Date(req.body.ModifiedOn)
+app.put("/deletelead/:leadid", async (req, res) => {
+  try {
+    const id = parseInt(req.params.leadid);
+    const isActive = parseInt(req.body.IsActive);
+
+    // Update lead's IsActive status
+    const leadUpdateQuery = {
+      $set: { IsActive: isActive },
     };
-    var database = clientObject.db("Ogha");
-    database
-      .collection("leadsCapture")
-      .updateOne(findQuery, updateQuery)
-      .then((result) => {
-        console.log("User Updated", id);
-        res.end();
-      });
 
-    var findLeadId = { leadId: id };
-    database
-      .collection("leadsFollowup")
-      .updateOne(findLeadId, updateQuery)
-      .then((result) => {
-        console.log("User Updated", id);
-        res.end();
-      });
-  });
+    // Update the lead's IsActive status in leadsCapture
+    const leadUpdateResult = await leadsCapture.updateOne({ id: id }, leadUpdateQuery);
+
+    // Update the lead's IsActive status in leadsFollowup
+    const followupUpdateResult = await leadsFollowup.updateOne({ leadId: id }, leadUpdateQuery);
+
+    if (leadUpdateResult.nModified > 0 || followupUpdateResult.nModified > 0) {
+      console.log(`Lead ${id} updated with IsActive set to ${isActive}`);
+      res.status(200).json({ message: `Lead ${id} updated with IsActive set to ${isActive}` });
+    } else {
+      console.log(`No changes made to lead ${id}`);
+      res.status(404).json({ error: `No changes made to lead ${id}` });
+    }
+  } catch (error) {
+    console.error("Error updating lead:", error);
+    res.status(500).json({ error: "An error occurred while updating the lead" });
+  }
 });
 
 // Customer Walkin Get Method
 
-app.get("/getWalkinCustomer", (req, res) => {
-  mongoose.connect(connectionString).then((clientObject) => {
-    var database = clientObject.db("Ogha");
-    database
-      .collection("leadsCapture")
-      .find({ IsActive: 1, type: "Walkin" })
-      .toArray()
-      .then((documents) => {
-        res.send(documents);
-        res.end();
-      });
-  });
+app.get("/getWalkinCustomer", async (req, res) => {
+  try {
+    const walkinCustomers = await leadsCapture.find({ IsActive: 1, type: "Walkin" }).exec();
+    res.send(walkinCustomers);
+  } catch (error) {
+    console.error("Error retrieving Walkin customers:", error);
+    res.status(500).json({ error: "An error occurred" });
+  }
 });
 
 // Customer Walkin Post Method
