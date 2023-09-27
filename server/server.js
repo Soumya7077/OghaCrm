@@ -268,28 +268,24 @@ app.get("/leadscapture", async (req, res) => {
 
 // Leads Followup Get Method
 
-app.get("/getfollowupdata", (req, res) => {
-  mongoose.connect(connectionString).then((clientObject) => {
-    var database = clientObject.db("Ogha");
-    database
-      .collection("leadsFollowup")
-      .aggregate([
-        { $match: { IsActive: 1 } },
-        { $sort: { leadId: -1, folloupDateTime: -1 } },
-        {
-          $group: {
-            _id: "$leadId",
-            latestFollowup: { $first: "$$ROOT" },
-          },
+app.get("/getfollowupdata", async (req, res) => {
+  try {
+    const latestFollowups = await leadsFollowup.aggregate([
+      { $match: { IsActive: 1 } },
+      { $sort: { leadId: -1, folloupDateTime: -1 } },
+      {
+        $group: {
+          _id: "$leadId",
+          latestFollowup: { $first: "$$ROOT" },
         },
-      ])
-      .toArray()
-      .then((documents) => {
-        const latestData = documents.map((doc) => doc.latestFollowup);
-        res.send(latestData);
-        res.end();
-      });
-  });
+      },
+    ]);
+
+    res.send(latestFollowups.map((doc) => doc.latestFollowup));
+  } catch (error) {
+    console.error("Error retrieving latest follow-up data:", error);
+    res.status(500).json({ error: "An error occurred" });
+  }
 });
 
 // Followup details post method
