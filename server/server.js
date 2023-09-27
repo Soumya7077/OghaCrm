@@ -34,22 +34,17 @@ const staffTypeSchema = new mongoose.Schema({
 });
 
 const leadsCaptureSchema = new mongoose.Schema({
-        id: Number,
-        fullName: String,
-        phoneNumber: String,
-        emailAddress: String,
-        jobTitle: String,
-        address: String,
-        source: String,
-        type: String,
-        // visitDate: req.body.folloupDateTime,
-        folloupDateTime:Date,
-        isInterested:String,
-        IsActive: Number,
-        CreatedOn: Date,
-        ModifiedBy:Number,
-        ModifiedOn:Date,
-        Remark:String
+  id: Number,
+  fullName: String,
+  phoneNumber: String,
+  emailAddress: String,
+  jobTitle: String,
+  address: String,
+  source: String,
+  type: String,
+  // visitDate: req.body.folloupDateTime,
+  IsActive: Number,
+  CreatedOn: Date,
 
 });
 
@@ -86,6 +81,79 @@ const customerAttendenceSchema = new mongoose.Schema({
 });
 
 
+const leadsFollowupSchema = new mongoose.Schema({
+    id:Number,
+    leadId:Number,
+    criteria:String,
+    folloupDateTime:Date,
+    remarks:String,
+    CreatedOn:Date,
+    IsActive:Number
+});
+
+
+const packageManagementSchema = new mongoose.Schema({
+    id:Number,
+    img:String,
+    packageName:String,
+    cost:Number,
+    description:String,
+    duration:String,
+    forService:String,
+    CreatedOn:Date,
+    IsActive:Number,
+    createdBy:Number,
+    modifiedBy:Number,
+    modifiedOn:Date
+});
+
+
+const paymentSchema = new mongoose.Schema({
+    id:Number,
+    userName:String,
+    phone:String,
+    email:String,
+    packageId:Number,
+    packageName:String,
+    cost:Number,
+    service:String,
+    paymentStatus:String,
+    endDate:Date,
+    createdOn:Date,
+    createdBy:Number,
+    IsActive:Number
+});
+
+
+const promotionSchema = new mongoose.Schema({
+    id: Number,
+    promotionName: String,
+    promotionDate: Date,
+    descriptionEmail: String,
+    descriptionMessage: String,
+    createdOn: Date,
+    createdBy: Number,
+    IsActive: Number,
+});
+
+const subscriberSchema = new mongoose.Schema({
+  id: Number,
+  fullName: String,
+  phoneNumber: String,
+  email: String,
+  subscriptionFor: String,
+  subscriptionType: String,
+  startDate: Date,
+  endDate: Date,
+  amountPaid: Number,
+  perferedTime: String,
+  userId: Number,
+  createdBy: Number,
+  createdOn: Date,
+  modifiedBy: Number,
+  modifiedOn: Date,
+  isActive: Number,
+})
 
 
 
@@ -94,6 +162,11 @@ const leadsCapture = mongoose.model("leadsCapture", leadsCaptureSchema, "leadsCa
 const staffManage = mongoose.model("StaffManage", staffManageSchema, "StaffManage");
 const category = mongoose.model("category", categorySchema, "category");
 const customerAttendence = mongoose.model("customerAttendence", customerAttendenceSchema, "customerAttendence");
+const leadsFollowup = mongoose.model("leadsFollowup", leadsFollowupSchema, "leadsFollowup");
+const packageManagement = mongoose.model("packageManagement", packageManagementSchema, "packageManagement");
+const payment = mongoose.model("payment", paymentSchema, "payment");
+const promotion = mongoose.model("promotionManagement", promotionSchema, "promotionManagement");
+const subscriber = mongoose.model("subscriber", subscriberSchema, "subscriber");
 
 var app = express();
 app.use(cors());
