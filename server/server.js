@@ -43,8 +43,14 @@ const leadsCaptureSchema = new mongoose.Schema({
         source: String,
         type: String,
         // visitDate: req.body.folloupDateTime,
+        folloupDateTime:Date,
+        isInterested:String,
         IsActive: Number,
         CreatedOn: Date,
+        ModifiedBy:Number,
+        ModifiedOn:Date,
+        Remark:String
+
 });
 
 const staffManageSchema = new mongoose.Schema({
