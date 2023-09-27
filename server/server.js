@@ -49,6 +49,21 @@ const leadsCaptureSchema = new mongoose.Schema({
   Remark:String
 });
 
+const staffManageSchema = new mongoose.Schema({
+    id:Number,
+    FullName:String,
+    PhoneNumber:String,
+    Email:String,
+    JobTitle:String,
+    Address:String,
+    UserType:Number,
+    UserName:String,
+    Password:String,
+    CreatedOn:Date,
+    IsActive:Number,
+    ModifiedOn:Date
+})
+
 
 
 const StaffType = mongoose.model("StaffType", staffTypeSchema, "StaffType");
@@ -143,7 +158,7 @@ app.post("/addlead", (req, res) => {
 
 app.get("/leadscapture", async (req, res) => {
   try {
-    const leads = await leadsCapture.find({ IsActive: 1, type: "Lead" }).exec();
+    const leads = await leadsCapture.find({ IsActive: 1, type: "Lead" });
     res.send(leads);
   } catch (error) {
     console.error("Error retrieving leads:", error);
