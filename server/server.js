@@ -81,7 +81,7 @@ function convertHtmlDescriptionToCommaSeparated(htmlDescription) {
 app.get("/getstafftype", async (req, res) => {
   try {
     const staffTypes = await StaffType.find({});
-    res.send(staffTypes);
+    res.send("Hii");
   } catch (error) {
     console.error("Error retrieving staff types:", error);
     res.status(500).json({ error: "An error occurred" });
