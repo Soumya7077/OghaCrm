@@ -6,12 +6,33 @@ const cheerio = require("cheerio");
 var nodemailer = require("nodemailer");
 var mongoose = require("mongoose");
 
-var connectionString = "mongodb+srv://Ogha:Ogha2023@cluster0.aryzpwf.mongodb.net/?retryWrites=true&w=majority&appName=AtlasApp";
-// mongoose.connect(connectionString).then(() => {
-//     console.log("Connected");
-// }).catch(() => {
-//   console.log("Failed");
-// })
+var connectionString = "mongodb+srv://Ogha:Ogha2023@cluster0.aryzpwf.mongodb.net/Ogha?retryWrites=true&w=majority&appName=AtlasApp";
+const db = mongoose.createConnection(connectionString, {
+  useNewUrlParser: true, 
+  useUnifiedTopology: true, 
+  dbName: 'Ogha', 
+});
+
+// Handle connection events
+db.on("connected", () => {
+  console.log(`Connected to MongoDB database:Ogha`);
+});
+
+db.on("error", (error) => {
+  console.error(`MongoDB connection error: ${error}`);
+});
+
+db.on("disconnected", () => {
+  console.log(`Disconnected from MongoDB`);
+});
+
+// Staff type Schema
+const staffTypeSchema = new mongoose.Schema({
+  id:Number,
+  type:String
+});
+
+const StaffType = mongoose.model("StaffType", staffTypeSchema);
 
 var app = express();
 app.use(cors());
@@ -36,18 +57,14 @@ function convertHtmlDescriptionToCommaSeparated(htmlDescription) {
 
 // Get method for stafftype
 
-app.get("/getstafftype", (req, res) => {
-  mongoose.connect(connectionString).then((clientObject) => {
-    var database = clientObject.db("Ogha");
-    database
-      .collection("StaffType")
-      .find({})
-      .toArray()
-      .then((documents) => {
-        res.send(documents);
-        res.end();
-      });
-  });
+app.get("/getstafftype", async (req, res) => {
+  try {
+    const staffTypes = await StaffType.find({});
+    res.send(staffTypes);
+  } catch (error) {
+    console.error("Error retrieving staff types:", error);
+    res.status(500).json({ error: "An error occurred" });
+  }
 });
 
 // Post lead capture data to the database.
