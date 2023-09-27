@@ -34,22 +34,17 @@ const staffTypeSchema = new mongoose.Schema({
 });
 
 const leadsCaptureSchema = new mongoose.Schema({
-  id:Number,
-  fullName:String,
-  phoneNumber:String,
-  emailAddress:String,
-  jobTitle:String,
-  address:String,
-  source:String,
-  type:String,
-  IsActive:Number,
-  CreatedOn:Date,
-  folloupDateTime:Date,
-  isInterested:String,
-  Remark:String,
-  CreatedBy:String,
-  ModifiedBy:String,
-  ModifiedOn:Date
+        id: Number,
+        fullName: String,
+        phoneNumber: String,
+        emailAddress: String,
+        jobTitle: String,
+        address: String,
+        source: String,
+        type: String,
+        // visitDate: req.body.folloupDateTime,
+        IsActive: Number,
+        CreatedOn: Date,
 });
 
 const staffManageSchema = new mongoose.Schema({
@@ -65,13 +60,34 @@ const staffManageSchema = new mongoose.Schema({
     CreatedOn:Date,
     IsActive:Number,
     ModifiedOn:Date
-})
+});
+
+const categorySchema = new mongoose.Schema({
+    id:Number,
+    category:String
+});
+
+const customerAttendenceSchema = new mongoose.Schema({
+    id:Number,
+    customerName:String,
+    phone:String,
+    email:String,
+    date:Date,
+    intime:String,
+    outtime:String,
+    remarks:String,
+    createdOn:Date
+});
+
+
 
 
 
 const StaffType = mongoose.model("StaffType", staffTypeSchema, "StaffType");
 const leadsCapture = mongoose.model("leadsCapture", leadsCaptureSchema, "leadsCapture");
-const staffManage = mongoose.model("StaffManage", staffManageSchema, "StaffManage")
+const staffManage = mongoose.model("StaffManage", staffManageSchema, "StaffManage");
+const category = mongoose.model("category", categorySchema, "category");
+const customerAttendence = mongoose.model("customerAttendence", customerAttendenceSchema, "customerAttendence");
 
 var app = express();
 app.use(cors());
