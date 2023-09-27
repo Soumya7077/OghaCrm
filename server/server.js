@@ -142,7 +142,7 @@ app.post("/addlead", (req, res) => {
 
 app.get("/leadscapture", async (req, res) => {
   try {
-    const leads = await leadsCapture.find({ IsActive: 1, type: "Lead" }).exec();
+    const leads = await leadsCapture.find({ IsActive: 1, type: "Lead" }).maxTimeMS(30000).exec();
     res.send(leads);
   } catch (error) {
     console.error("Error retrieving leads:", error);
