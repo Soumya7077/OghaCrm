@@ -53,7 +53,7 @@ const leadsCaptureSchema = new mongoose.Schema({
 
 const StaffType = mongoose.model("StaffType", staffTypeSchema, "StaffType");
 
-const leadsCapture = mongoose.model("leadsCapture", leadsCaptureSchema);
+const leadsCapture = mongoose.model("leadsCapture", leadsCaptureSchema, "leadsCapture");
 
 var app = express();
 app.use(cors());
