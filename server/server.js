@@ -70,8 +70,8 @@ const staffManageSchema = new mongoose.Schema({
 
 
 const StaffType = mongoose.model("StaffType", staffTypeSchema, "StaffType");
-
 const leadsCapture = mongoose.model("leadsCapture", leadsCaptureSchema, "leadsCapture");
+const staffManage = mongoose.model("StaffManage", staffManageSchema, "StaffManage")
 
 var app = express();
 app.use(cors());
@@ -583,19 +583,15 @@ app.post("/addstaff", (req, res) => {
 
 // Get Method for Staff
 
-app.get("/getstaffdetails", (req, res) => {
-  mongoose.connect(connectionString).then((clientObject) => {
-    var database = clientObject.db("Ogha");
+app.get("/getstaffdetails", async (req, res) => {
 
-    database
-      .collection("StaffManage")
-      .find({})
-      .toArray()
-      .then((documents) => {
-        res.send(documents);
-        res.end();
-      });
-  });
+  try{
+    const staffDetails = await staffManage.find({});
+    res.send(staffDetails);
+  }catch(error){
+    console.error("Error retrieving staff types:", error);
+    res.status(500).json({ error: "An error occurred" });
+  }
 });
 
 // Edit Method for Staff
