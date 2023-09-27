@@ -55,6 +55,17 @@ const StaffType = mongoose.model("StaffType", staffTypeSchema);
 const leadsCapture = mongoose.model("leadsCapture", leadsCaptureSchema);
 
 var app = express();
+
+app.get("/getstafftype", async (req, res) => {
+  try {
+    const staffTypes = await StaffType.find({});
+    res.send(staffTypes);
+  } catch (error) {
+    console.error("Error retrieving staff types:", error);
+    res.status(500).json({ error: "An error occurred" });
+  }
+});
+
 app.use(cors());
 app.use(bodyParser.json({ limit: "50mb" }));
 app.use(
@@ -77,15 +88,7 @@ function convertHtmlDescriptionToCommaSeparated(htmlDescription) {
 
 // Get method for stafftype
 
-app.get("/getstafftype", async (req, res) => {
-  try {
-    const staffTypes = await StaffType.find({});
-    res.send(staffTypes);
-  } catch (error) {
-    console.error("Error retrieving staff types:", error);
-    res.status(500).json({ error: "An error occurred" });
-  }
-});
+
 
 // Post lead capture data to the database.
 
