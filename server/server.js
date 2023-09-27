@@ -320,19 +320,17 @@ app.post("/addFollowupDetails", (req, res) => {
 
 // Followup details get method
 
-app.get("/followupdetails/:id", (req, res) => {
-  var EditId = parseInt(req.params.id);
-  mongoose.connect(connectionString).then((clientObject) => {
-    var database = clientObject.db("Ogha");
-    database
-      .collection("leadsFollowup")
-      .find({ leadId: EditId })
-      .toArray()
-      .then((document) => {
-        res.send(document);
-        res.end();
-      });
-  });
+app.get("/followupdetails/:id", async (req, res) => {
+  try {
+    const EditId = parseInt(req.params.id);
+
+    const followupDetails = await leadsFollowup.find({ leadId: EditId });
+
+    res.send(followupDetails);
+  } catch (error) {
+    console.error("Error retrieving follow-up details:", error);
+    res.status(500).json({ error: "An error occurred" });
+  }
 });
 
 // After clicking the 'Edit' button, the specific lead data is displayed in the edit form
