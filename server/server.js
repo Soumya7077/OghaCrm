@@ -51,7 +51,7 @@ const leadsCaptureSchema = new mongoose.Schema({
 
 
 
-const StaffType = mongoose.model("StaffType", staffTypeSchema);
+const StaffType = mongoose.model("StaffType", staffTypeSchema, "StaffType");
 
 const leadsCapture = mongoose.model("leadsCapture", leadsCaptureSchema);
 
