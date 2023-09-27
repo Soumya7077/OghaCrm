@@ -32,7 +32,27 @@ const staffTypeSchema = new mongoose.Schema({
   type:String
 });
 
+const leadsCaptureSchema = new mongoose.Schema({
+  id:Number,
+  fullName:String,
+  phoneNumber:String,
+  emailAddress:String,
+  jobTitle:String,
+  address:String,
+  source:String,
+  type:String,
+  IsActive:Number,
+  CreatedOn:Date,
+  folloupDateTime:Date,
+  isInterested:String,
+  Remark:String
+});
+
+
+
 const StaffType = mongoose.model("StaffType", staffTypeSchema);
+
+const leadsCapture = mongoose.model("leadsCapture", leadsCaptureSchema);
 
 var app = express();
 app.use(cors());
@@ -120,18 +140,14 @@ app.post("/addlead", (req, res) => {
   });
 });
 
-app.get("/leadscapture", (req, res) => {
-  mongoose.connect(connectionString).then((clientObject) => {
-    var database = clientObject.db("Ogha");
-    database
-      .collection("leadsCapture")
-      .find({ IsActive: 1, type: "Lead" })
-      .toArray()
-      .then((documents) => {
-        res.send(documents);
-        res.end();
-      });
-  });
+app.get("/leadscapture", async (req, res) => {
+  try {
+    const leads = await leadsCapture.find({ IsActive: 1, type: "Lead" }).exec();
+    res.send(leads);
+  } catch (error) {
+    console.error("Error retrieving leads:", error);
+    res.status(500).json({ error: "An error occurred" });
+  }
 });
 
 // Leads Followup Get Method
