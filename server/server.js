@@ -4,8 +4,14 @@ var cors = require("cors");
 const bodyParser = require("body-parser");
 const cheerio = require("cheerio");
 var nodemailer = require("nodemailer");
+var mongoose = require("mongoose");
 
-var connectionString = "mongodb://127.0.0.1:27017";
+var connectionString = "mongodb+srv://Ogha:Ogha2023@cluster0.aryzpwf.mongodb.net/?retryWrites=true&w=majority&appName=AtlasApp";
+// mongoose.connect(connectionString).then(() => {
+//     console.log("Connected");
+// }).catch(() => {
+//   console.log("Failed");
+// })
 
 var app = express();
 app.use(cors());
@@ -31,7 +37,7 @@ function convertHtmlDescriptionToCommaSeparated(htmlDescription) {
 // Get method for stafftype
 
 app.get("/getstafftype", (req, res) => {
-  mongoClient.connect(connectionString).then((clientObject) => {
+  mongoose.connect(connectionString).then((clientObject) => {
     var database = clientObject.db("Ogha");
     database
       .collection("StaffType")
@@ -47,7 +53,7 @@ app.get("/getstafftype", (req, res) => {
 // Post lead capture data to the database.
 
 app.post("/addlead", (req, res) => {
-  mongoClient.connect(connectionString).then((clientObject) => {
+  mongoose.connect(connectionString).then((clientObject) => {
     var database = clientObject.db("Ogha");
     var folloupDateTime = new Date(req.body.folloupDateTime);
 
@@ -98,7 +104,7 @@ app.post("/addlead", (req, res) => {
 });
 
 app.get("/leadscapture", (req, res) => {
-  mongoClient.connect(connectionString).then((clientObject) => {
+  mongoose.connect(connectionString).then((clientObject) => {
     var database = clientObject.db("Ogha");
     database
       .collection("leadsCapture")
@@ -114,7 +120,7 @@ app.get("/leadscapture", (req, res) => {
 // Leads Followup Get Method
 
 app.get("/getfollowupdata", (req, res) => {
-  mongoClient.connect(connectionString).then((clientObject) => {
+  mongoose.connect(connectionString).then((clientObject) => {
     var database = clientObject.db("Ogha");
     database
       .collection("leadsFollowup")
@@ -140,7 +146,7 @@ app.get("/getfollowupdata", (req, res) => {
 // Followup details post method
 
 app.post("/addFollowupDetails", (req, res) => {
-  mongoClient.connect(connectionString).then((clientObject) => {
+  mongoose.connect(connectionString).then((clientObject) => {
     var database = clientObject.db("Ogha");
     database
       .collection("leadsFollowup")
@@ -171,7 +177,7 @@ app.post("/addFollowupDetails", (req, res) => {
 
 app.get("/followupdetails/:id", (req, res) => {
   var EditId = parseInt(req.params.id);
-  mongoClient.connect(connectionString).then((clientObject) => {
+  mongoose.connect(connectionString).then((clientObject) => {
     var database = clientObject.db("Ogha");
     database
       .collection("leadsFollowup")
@@ -188,7 +194,7 @@ app.get("/followupdetails/:id", (req, res) => {
 
 app.get("/leadscapture/:id", (req, res) => {
   var EditId = parseInt(req.params.id);
-  mongoClient.connect(connectionString).then((clientObject) => {
+  mongoose.connect(connectionString).then((clientObject) => {
     var database = clientObject.db("Ogha");
     database
       .collection("leadsCapture")
@@ -202,7 +208,7 @@ app.get("/leadscapture/:id", (req, res) => {
 });
 app.get("/leadscaptureforedit/:id", (req, res) => {
   var EditId = parseInt(req.params.id);
-  mongoClient
+  mongoose
     .connect(connectionString)
     .then((clientObject) => {
       var database = clientObject.db("Ogha");
@@ -245,7 +251,7 @@ app.get("/leadscaptureforedit/:id", (req, res) => {
 
 // app.get("/leadscapture/:id", (req, res) => {
 //   var EditId = parseInt(req.params.id);
-//   mongoClient.connect(connectionString).then(clientObject => {
+//   mongoose.connect(connectionString).then(clientObject => {
 //     var database = clientObject.db("Ogha");
 
 //     const query1 = database.collection("leadsCapture").find({ id: EditId }).toArray();
@@ -272,7 +278,7 @@ app.get("/leadscaptureforedit/:id", (req, res) => {
 
 // app.get("/leadsfollowupremark/:id", (req, res) => {
 //   var EditId = parseInt(req.params.id);
-//   mongoClient.connect(connectionString).then(clientObject => {
+//   mongoose.connect(connectionString).then(clientObject => {
 //     var database = clientObject.db("Ogha");
 //     database.collection("leadsFollowup").find({ leadId: EditId }).toArray().then(document => {
 //       res.send(document);
@@ -286,7 +292,7 @@ app.get("/leadscaptureforedit/:id", (req, res) => {
 app.put("/updatelead/:id", (req, res) => {
   var id = parseInt(req.params.id);
 
-  mongoClient.connect(connectionString).then((clientObject) => {
+  mongoose.connect(connectionString).then((clientObject) => {
     var findQuery = { id: id };
     var fiedFollowupQuery = { leadId: id };
     var updateQuery = {
@@ -342,7 +348,7 @@ app.put("/updateleadstowalkin/:id", (req, res) => {
   var remark = req.body.remark;
   var findQuery = { phoneNumber: phone };
   var updateQuery = { $set: { type: type, Remark: remark } };
-  mongoClient.connect(connectionString).then((clientObject) => {
+  mongoose.connect(connectionString).then((clientObject) => {
     var database = clientObject.db("Ogha");
     database
       .collection("leadsCapture")
@@ -356,7 +362,7 @@ app.put("/updateleadstowalkin/:id", (req, res) => {
 app.put("/deletelead/:leadid", (req, res) => {
   var id = parseInt(req.params.leadid);
 
-  mongoClient.connect(connectionString).then((clientObject) => {
+  mongoose.connect(connectionString).then((clientObject) => {
     var findQuery = { id: id };
     var updateQuery = {
       $set: { IsActive: parseInt(req.body.IsActive) }, // , ModifiedBy:req.body.ModifiedBy, ModifiedOn:new Date(req.body.ModifiedOn)
@@ -384,7 +390,7 @@ app.put("/deletelead/:leadid", (req, res) => {
 // Customer Walkin Get Method
 
 app.get("/getWalkinCustomer", (req, res) => {
-  mongoClient.connect(connectionString).then((clientObject) => {
+  mongoose.connect(connectionString).then((clientObject) => {
     var database = clientObject.db("Ogha");
     database
       .collection("leadsCapture")
@@ -400,7 +406,7 @@ app.get("/getWalkinCustomer", (req, res) => {
 // Customer Walkin Post Method
 
 app.post("/addWalkin", (req, res) => {
-  mongoClient.connect(connectionString).then((clientObject) => {
+  mongoose.connect(connectionString).then((clientObject) => {
     var database = clientObject.db("Ogha");
     database
       .collection("leadsCapture")
@@ -440,7 +446,7 @@ app.post("/addWalkin", (req, res) => {
 app.get("/getWalkinDetails/:id", (req, res) => {
   var id = parseInt(req.params.id);
 
-  mongoClient.connect(connectionString).then((clientObject) => {
+  mongoose.connect(connectionString).then((clientObject) => {
     var database = clientObject.db("Ogha");
     database
       .collection("leadsCapture")
@@ -458,7 +464,7 @@ app.get("/getWalkinDetails/:id", (req, res) => {
 app.put("/updateWalkin/:id", (req, res) => {
   var id = parseInt(req.params.id);
 
-  mongoClient.connect(connectionString).then((clientObject) => {
+  mongoose.connect(connectionString).then((clientObject) => {
     var database = clientObject.db("Ogha");
     var findQuery = { id: id };
     var updateQuery = {
@@ -487,7 +493,7 @@ app.put("/updateWalkin/:id", (req, res) => {
 // Post Method for Staff
 
 app.post("/addstaff", (req, res) => {
-  mongoClient.connect(connectionString).then((clientObject) => {
+  mongoose.connect(connectionString).then((clientObject) => {
     var database = clientObject.db("Ogha");
     database
       .collection("StaffManage")
@@ -524,7 +530,7 @@ app.post("/addstaff", (req, res) => {
 // Get Method for Staff
 
 app.get("/getstaffdetails", (req, res) => {
-  mongoClient.connect(connectionString).then((clientObject) => {
+  mongoose.connect(connectionString).then((clientObject) => {
     var database = clientObject.db("Ogha");
 
     database
@@ -543,7 +549,7 @@ app.get("/getstaffdetails", (req, res) => {
 app.get("/editstaff/:id", (req, res) => {
   var id = parseInt(req.params.id);
 
-  mongoClient.connect(connectionString).then((clientObject) => {
+  mongoose.connect(connectionString).then((clientObject) => {
     var database = clientObject.db("Ogha");
     database
       .collection("StaffManage")
@@ -560,7 +566,7 @@ app.get("/editstaff/:id", (req, res) => {
 app.put("/updatestaff/:id", (req, res) => {
   var id = parseInt(req.params.id);
 
-  mongoClient.connect(connectionString).then((clientObject) => {
+  mongoose.connect(connectionString).then((clientObject) => {
     var database = clientObject.db("Ogha");
     var findQuery = { id: id };
     var updateQuery = {
@@ -593,7 +599,7 @@ app.put("/updatestaff/:id", (req, res) => {
 app.put("/deletestaff/:id", (req, res) => {
   var id = parseInt(req.params.id);
 
-  mongoClient.connect(connectionString).then((clientObject) => {
+  mongoose.connect(connectionString).then((clientObject) => {
     var database = clientObject.db("Ogha");
     var findQuery = { id: id };
     var updateQuery = { $set: { IsActive: req.body.IsActive } };
@@ -613,7 +619,7 @@ app.put("/deletestaff/:id", (req, res) => {
 app.get("/getStaffData/:type", (req, res) => {
   var type = parseInt(req.params.type);
 
-  mongoClient.connect(connectionString).then((clientObject) => {
+  mongoose.connect(connectionString).then((clientObject) => {
     var database = clientObject.db("Ogha");
     database
       .collection("StaffManage")
@@ -629,7 +635,7 @@ app.get("/getStaffData/:type", (req, res) => {
 // Get method for package manage
 
 app.get("/getpackages", (req, res) => {
-  mongoClient.connect(connectionString).then((clientObject) => {
+  mongoose.connect(connectionString).then((clientObject) => {
     var database = clientObject.db("Ogha");
     database
       .collection("packageManagement")
@@ -646,7 +652,7 @@ app.get("/getpackages", (req, res) => {
 
 app.post("/addpackges", async (req, res) => {
   try {
-    const clientObject = await mongoClient.connect(connectionString);
+    const clientObject = await mongoose.connect(connectionString);
     const database = clientObject.db("Ogha");
 
     const lastdocuments = await database
@@ -690,7 +696,7 @@ app.post("/addpackges", async (req, res) => {
 
 app.get("/getPackageDetails/:id", (req, res) => {
   var id = parseInt(req.params.id);
-  mongoClient.connect(connectionString).then((clientObject) => {
+  mongoose.connect(connectionString).then((clientObject) => {
     var database = clientObject.db("Ogha");
     database
       .collection("packageManagement")
@@ -724,7 +730,7 @@ app.put("/updatePackage/:id", (req, res) => {
     },
   };
 
-  mongoClient.connect(connectionString).then((clientObject) => {
+  mongoose.connect(connectionString).then((clientObject) => {
     var database = clientObject.db("Ogha");
     database
       .collection("packageManagement")
@@ -740,7 +746,7 @@ app.put("/updatePackage/:id", (req, res) => {
 app.put("/deletePackage/:id", (req, res) => {
   var id = parseInt(req.params.id);
 
-  mongoClient.connect(connectionString).then((clientObject) => {
+  mongoose.connect(connectionString).then((clientObject) => {
     var database = clientObject.db("Ogha");
     var findQuery = { id: id };
     var updateQuery = { $set: { IsActive: req.body.IsActive } };
@@ -758,7 +764,7 @@ app.put("/deletePackage/:id", (req, res) => {
 
 // Display Gym Package
 app.get("/getGymPackage", (req, res) => {
-  mongoClient.connect(connectionString).then((clientObject) => {
+  mongoose.connect(connectionString).then((clientObject) => {
     var database = clientObject.db("Ogha");
     database
       .collection("packageManagement")
@@ -776,7 +782,7 @@ app.get("/getGymPackage", (req, res) => {
 app.get("/getCategorywisePackage/:type", (req, res) => {
   var type = req.params.type;
 
-  mongoClient.connect(connectionString).then((clientObject) => {
+  mongoose.connect(connectionString).then((clientObject) => {
     var database = clientObject.db("Ogha");
     database
       .collection("packageManagement")
@@ -795,7 +801,7 @@ app.get("/getPackageDataByTypeId", (req, res) => {});
 // Post method for promotion msg
 
 app.post("/addpromotion", (req, res) => {
-  mongoClient.connect(connectionString).then((clientObject) => {
+  mongoose.connect(connectionString).then((clientObject) => {
     var database = clientObject.db("Ogha");
 
     database
@@ -831,7 +837,7 @@ app.post("/addpromotion", (req, res) => {
 //  Get method for promotion
 
 app.get("/promotion", (req, res) => {
-  mongoClient.connect(connectionString).then((clientObject) => {
+  mongoose.connect(connectionString).then((clientObject) => {
     var database = clientObject.db("Ogha");
     database
       .collection("promotionManagement")
@@ -849,7 +855,7 @@ app.get("/promotion", (req, res) => {
 app.get("/getPromotionDetails/:id", (req, res) => {
   var id = parseInt(req.params.id);
 
-  mongoClient.connect(connectionString).then((clientObject) => {
+  mongoose.connect(connectionString).then((clientObject) => {
     var database = clientObject.db("Ogha");
     database
       .collection("promotionManagement")
@@ -878,7 +884,7 @@ app.put("/updatepromotion/:id", (req, res) => {
     },
   };
 
-  mongoClient.connect(connectionString).then((clientObject) => {
+  mongoose.connect(connectionString).then((clientObject) => {
     var database = clientObject.db("Ogha");
     database
       .collection("promotionManagement")
@@ -896,7 +902,7 @@ app.put("/updatepromotion/:id", (req, res) => {
 app.put("/deletePromotion/:id", (req, res) => {
   var id = parseInt(req.params.id);
 
-  mongoClient.connect(connectionString).then((clientObject) => {
+  mongoose.connect(connectionString).then((clientObject) => {
     var database = clientObject.db("Ogha");
     var findQuery = { id: id };
     var updateQuery = { $set: { IsActive: req.body.IsActive } };
@@ -915,7 +921,7 @@ app.put("/deletePromotion/:id", (req, res) => {
 // Get method for subscriber
 
 app.get("/subscriberUser", (req, res) => {
-  mongoClient.connect(connectionString).then((clientObject) => {
+  mongoose.connect(connectionString).then((clientObject) => {
     var database = clientObject.db("Ogha");
     database
       .collection("subscriber")
@@ -933,7 +939,7 @@ app.get("/subscriberUser", (req, res) => {
 app.get("/addsubscriber", (req, res) => {
   var id = parseInt(req.query.packageId);
   // console.log(id);
-  mongoClient.connect(connectionString).then((clientObject) => {
+  mongoose.connect(connectionString).then((clientObject) => {
     var database = clientObject.db("Ogha");
     database
       .collection("packageManagement")
@@ -949,7 +955,7 @@ app.get("/addsubscriber", (req, res) => {
 // Post method for subscribed user
 
 app.post("/subscriberUser", (req, res) => {
-  mongoClient.connect(connectionString).then((clientObject) => {
+  mongoose.connect(connectionString).then((clientObject) => {
     var database = clientObject.db("Ogha");
     database
       .collection("subscriber")
@@ -1003,7 +1009,7 @@ app.post("/subscriberUser", (req, res) => {
 
 app.get("/getsubscriberdetails/:id", (req, res) => {
   var id = parseInt(req.params.id);
-  mongoClient.connect(connectionString).then((clientObject) => {
+  mongoose.connect(connectionString).then((clientObject) => {
     var database = clientObject.db("Ogha");
     database
       .collection("subscriber")
@@ -1037,7 +1043,7 @@ app.put("/updatesubscriber/:id", (req, res) => {
       isActive: 1,
     },
   };
-  mongoClient.connect(connectionString).then((clientObject) => {
+  mongoose.connect(connectionString).then((clientObject) => {
     var database = clientObject.db("Ogha");
     database
       .collection("subscriber")
@@ -1053,7 +1059,7 @@ app.put("/updatesubscriber/:id", (req, res) => {
 // Getting the value in dropdown
 
 app.get("/customerList", (req, res) => {
-  mongoClient.connect(connectionString).then((clientObject) => {
+  mongoose.connect(connectionString).then((clientObject) => {
     var database = clientObject.db("Ogha");
     database
       .collection("leadsCapture")
@@ -1070,7 +1076,7 @@ app.get("/customerList", (req, res) => {
 
 app.get("/getStaff/:getData", (req, res) => {
   var type = parseInt(req.params.getData);
-  mongoClient.connect(connectionString).then((clientObject) => {
+  mongoose.connect(connectionString).then((clientObject) => {
     var database = clientObject.db("Ogha");
     // database.collection("")
 
@@ -1088,7 +1094,7 @@ app.get("/getStaff/:getData", (req, res) => {
 // Get the category values
 
 app.get("/getcategory", (req, res) => {
-  mongoClient.connect(connectionString).then((clientObject) => {
+  mongoose.connect(connectionString).then((clientObject) => {
     var database = clientObject.db("Ogha");
     database
       .collection("category")
@@ -1132,7 +1138,7 @@ app.post("/sendmail", (req, res) => {
 
 // app.get("/getWalkinData/:phone", (req, res) => {
 //   var phone = req.params.phone;
-//   mongoClient.connect(connectionString).then(clientObject => {
+//   mongoose.connect(connectionString).then(clientObject => {
 //     var database = clientObject.db("Ogha");
 //     database.collection("leadsCapture").find({ phoneNumber: phone, IsActive:1 }).toArray().then(documents => {
 //       res.send(documents);
@@ -1144,7 +1150,7 @@ app.post("/sendmail", (req, res) => {
 
 app.get("/getWalkinData/:phone", (req, res) => {
   var phone = req.params.phone;
-  mongoClient.connect(connectionString).then((clientObject) => {
+  mongoose.connect(connectionString).then((clientObject) => {
     var database = clientObject.db("Ogha");
     database
       .collection("leadsCapture")
@@ -1159,7 +1165,7 @@ app.get("/getWalkinData/:phone", (req, res) => {
 // Get method for  gym package
 
 app.get("/gympackages", (req, res) => {
-  mongoClient.connect(connectionString).then((clientObject) => {
+  mongoose.connect(connectionString).then((clientObject) => {
     var database = clientObject.db("Ogha");
     database
       .collection("packageManagement")
@@ -1175,7 +1181,7 @@ app.get("/gympackages", (req, res) => {
 // Get method for  Spa package
 
 app.get("/spapackages", (req, res) => {
-  mongoClient.connect(connectionString).then((clientObject) => {
+  mongoose.connect(connectionString).then((clientObject) => {
     var database = clientObject.db("Ogha");
     database
       .collection("packageManagement")
@@ -1191,7 +1197,7 @@ app.get("/spapackages", (req, res) => {
 //Get Method for salon package
 
 app.get("/salonpackages", (req, res) => {
-  mongoClient.connect(connectionString).then((clientObject) => {
+  mongoose.connect(connectionString).then((clientObject) => {
     var database = clientObject.db("Ogha");
     database
       .collection("packageManagement")
@@ -1207,7 +1213,7 @@ app.get("/salonpackages", (req, res) => {
 //Get Method for aesthetic packages
 
 app.get("/aestheticpackages", (req, res) => {
-  mongoClient.connect(connectionString).then((clientObject) => {
+  mongoose.connect(connectionString).then((clientObject) => {
     var database = clientObject.db("Ogha");
     database
       .collection("packageManagement")
@@ -1223,7 +1229,7 @@ app.get("/aestheticpackages", (req, res) => {
 
 app.get("/getSubscriber/:getData", (req, res) => {
   var type = req.params.getData;
-  mongoClient.connect(connectionString).then((clientObject) => {
+  mongoose.connect(connectionString).then((clientObject) => {
     var database = clientObject.db("Ogha");
     // database.collection("")
 
@@ -1244,7 +1250,7 @@ app.get("/assignedlist/:id", (req, res) => {
   var id = parseInt(req.params.id);
   var currentDate = new Date();
 
-  mongoClient.connect(connectionString).then((clientObject) => {
+  mongoose.connect(connectionString).then((clientObject) => {
     var database = clientObject.db("Ogha");
 
     database
@@ -1272,7 +1278,7 @@ app.get("/assignedlist/:id", (req, res) => {
 app.get("/todayschedule/:id", (req, res) => {
   var id = parseInt(req.params.id);
 
-  mongoClient.connect(connectionString).then((clientObject) => {
+  mongoose.connect(connectionString).then((clientObject) => {
     var database = clientObject.db("Ogha");
 
     database
@@ -1292,7 +1298,7 @@ app.get("/todayschedule/:id", (req, res) => {
 // add a subscriber for payment
 
 app.post("/addsubscription", (req, res) => {
-  mongoClient.connect(connectionString).then((clientObject) => {
+  mongoose.connect(connectionString).then((clientObject) => {
     var database = clientObject.db("Ogha");
     database
       .collection("payment")
@@ -1333,7 +1339,7 @@ app.post("/addsubscription", (req, res) => {
 //  Get Payment Method
 
 app.get("/getCustomerList", (req, res) => {
-  mongoClient.connect(connectionString).then((clientObject) => {
+  mongoose.connect(connectionString).then((clientObject) => {
     var database = clientObject.db("Ogha");
     database
       .collection("payment")
@@ -1348,7 +1354,7 @@ app.get("/getCustomerList", (req, res) => {
 
 app.get("/getCustomerListById/:id", (req, res) => {
   var id = parseInt(req.params.id);
-  mongoClient.connect(connectionString).then((clientObject) => {
+  mongoose.connect(connectionString).then((clientObject) => {
     var database = clientObject.db("Ogha");
     database
       .collection("payment")
@@ -1361,7 +1367,7 @@ app.get("/getCustomerListById/:id", (req, res) => {
 });
 
 app.post("/saveattendence", (req, res) => {
-  mongoClient.connect(connectionString).then((clientObject) => {
+  mongoose.connect(connectionString).then((clientObject) => {
     var database = clientObject.db("Ogha");
     database
       .collection("customerAttendence")
@@ -1397,7 +1403,7 @@ app.post("/saveattendence", (req, res) => {
 app.get("/getcustomerAttendence/:id", (req, res) => {
   var id = parseInt(req.params.id);
 
-  mongoClient.connect(connectionString).then((clientObject) => {
+  mongoose.connect(connectionString).then((clientObject) => {
     var database = clientObject.db("Ogha");
     database
       .collection("customerAttendence")
@@ -1419,7 +1425,7 @@ app.get("/getsubscriberreport", async (req, res) => {
   try {
     const fromdate = new Date(req.query.fromdate);
     const todate = new Date(req.query.todate);
-    const clientObject = await mongoClient.connect(connectionString);
+    const clientObject = await mongoose.connect(connectionString);
     const database = clientObject.db("Ogha");
     const collection = database.collection("subscriber");
 
@@ -1446,7 +1452,7 @@ app.get("/getpaymentreport", async (req, res) => {
     const paymentStatus = req.query.paymentStatus;
     console.log(paymentStatus, fromdate, todate);
 
-    const clientObject = await mongoClient.connect(connectionString);
+    const clientObject = await mongoose.connect(connectionString);
     const database = clientObject.db("Ogha");
     const collection = database.collection("payment");
 
