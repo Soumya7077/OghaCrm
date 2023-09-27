@@ -63,7 +63,7 @@ const AddSubscribedUser = () => {
     if (packageId) {
       axios({
         method: "get",
-        url: `http://127.0.0.1:5050/addsubscriber?packageId=${packageId}`,
+        url: `https://ogha.onrender.com/addsubscriber?packageId=${packageId}`,
       }).then((res) => {
         const data = res.data[0];
         setFormValue((prevState) => ({
@@ -87,7 +87,7 @@ const AddSubscribedUser = () => {
     if (key === "subscriptionType") {
       axios({
         method: "get",
-        url: `http://127.0.0.1:5050/getPackageDetails/${value}`,
+        url: `https://ogha.onrender.com/getPackageDetails/${value}`,
       }).then((res) => {
         console.log(res.data);
         setFormValue((prevState) => ({
@@ -108,14 +108,14 @@ const AddSubscribedUser = () => {
     if (formValue.subscriptionFor !== "") {
       axios({
         method: "get",
-        url: `http://127.0.0.1:5050/getStaffData/${formValue.subscriptionFor}`,
+        url: `https://ogha.onrender.com/getStaffData/${formValue.subscriptionFor}`,
       }).then((res) => {
         setStaffData(res.data);
       });
 
       axios({
         method: "get",
-        url: `http://127.0.0.1:5050/getCategorywisePackage/${formValue.subscriptionFor}`,
+        url: `https://ogha.onrender.com/getCategorywisePackage/${formValue.subscriptionFor}`,
       }).then((res) => {
         setPackageType(res.data);
       });
@@ -140,13 +140,13 @@ const AddSubscribedUser = () => {
     if (id) {
       axios({
         method: "put",
-        url: `http://127.0.0.1:5050/updatesubscriber/${id}`,
+        url: `https://ogha.onrender.com/updatesubscriber/${id}`,
         data: formValue,
       }).then(navigate("/subscription"));
     } else {
       axios({
         method: "post",
-        url: "http://127.0.0.1:5050/subscriberUser",
+        url: "https://ogha.onrender.com/subscriberUser",
         data: values,
       }).then(navigate("/subscription"));
     }
@@ -166,7 +166,7 @@ const AddSubscribedUser = () => {
   useEffect(() => {
     axios({
       method: "get",
-      url: `http://127.0.0.1:5050/getsubscriberdetails/${id}`,
+      url: `https://ogha.onrender.com/getsubscriberdetails/${id}`,
     }).then((res) => {
       console.log(res.data);
       setFormValue({
@@ -191,7 +191,7 @@ const AddSubscribedUser = () => {
   useEffect(() => {
     axios({
       method: "get",
-      url: "http://127.0.0.1:5050/customerList",
+      url: "https://ogha.onrender.com/customerList",
     }).then((res) => {
       sertCustomerName(res.data);
     });
@@ -205,7 +205,7 @@ const AddSubscribedUser = () => {
   function getSubscriberDetails(e) {
     axios({
       method: "get",
-      url: `http://127.0.0.1:5050/leadscapture/${e.value}`,
+      url: `https://ogha.onrender.com/leadscapture/${e.value}`,
     }).then((res) => {
       setFormValue((prevState) => ({
         ...prevState,

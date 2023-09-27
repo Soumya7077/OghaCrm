@@ -19,7 +19,7 @@ const GymSubscriber = () => {
         // console.log("res.params", params)
         axios({
             method: 'get',
-            url: "http://127.0.0.1:5050/getSubscriber/" +(params.type)
+            url: "https://ogha.onrender.com/getSubscriber/" +(params.type)
         }).then(
             res => {
                 const modifiedData = res.data.map((entry, index) => ({

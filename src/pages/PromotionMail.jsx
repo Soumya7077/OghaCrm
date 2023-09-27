@@ -22,7 +22,7 @@ const PromotionMail = () => {
     useEffect(() => {
         axios({
             method: 'get',
-            url: 'http://127.0.0.1:5050/leadscapture'
+            url: 'https://ogha.onrender.com/leadscapture'
         }).then(res => {
             const modifiedData = res.data.map((entry, index) => ({
                 srNo: index + 1, // Adding 1 to start Sr.No from 1
@@ -55,7 +55,7 @@ const PromotionMail = () => {
             };
             axios({
                 method: 'post',
-                url: `http://127.0.0.1:5050/sendmail`,
+                url: `https://ogha.onrender.com/sendmail`,
                 data: requestData
             }).then(res => {
                 console.log("Mail Sent to:", emailAddress);

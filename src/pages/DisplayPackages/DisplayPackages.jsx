@@ -17,7 +17,7 @@ function DisplayPackages() {
   useEffect(() => {
     axios({
       method: 'get',
-      url: 'http://127.0.0.1:5050/getGymPackage',
+      url: 'https://ogha.onrender.com/getGymPackage',
     }).then((res) => {
       setPackageData(res.data);
     });
@@ -30,7 +30,7 @@ function DisplayPackages() {
 
     axios({
       method:'get',
-      url:`http://127.0.0.1:5050/getCategorywisePackage/${category}`
+      url:`https://ogha.onrender.com/getCategorywisePackage/${category}`
     }).then(res => {
       setPackageData(res.data);
     })

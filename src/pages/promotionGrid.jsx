@@ -20,7 +20,7 @@ const PromotionGrid = () => {
     useEffect(() => {
         axios({
             method:'get',
-            url:'http://127.0.0.1:5050/promotion'
+            url:'https://ogha.onrender.com/promotion'
         }).then(res => {
             const modifiedData = res.data.map((entry, index)=>({
                 srNo: index+1,
@@ -41,7 +41,7 @@ const PromotionGrid = () => {
         if(e.type === "click"){
             axios({
                 method:'put',
-                url:`http://127.0.0.1:5050/deletePromotion/${promotionId}`,
+                url:`https://ogha.onrender.com/deletePromotion/${promotionId}`,
                 data:{IsActive:0}
             }).then(
                 window.location.reload()

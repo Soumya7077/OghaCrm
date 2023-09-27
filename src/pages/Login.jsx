@@ -24,7 +24,7 @@ const LoginPage = () => {
   useEffect(() => {
     axios({
       method: 'get',
-      url: 'http://127.0.0.1:5050/getstaffdetails'
+      url: 'https://ogha.onrender.com/getstaffdetails'
     }).then(res => {
       setStaffData(res.data);
       // console.log(res.data);

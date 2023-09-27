@@ -30,7 +30,7 @@ const WalkinRegisterForSpa = () => {
   useEffect(() => {
     axios({
       method: "get",
-      url: `http://127.0.0.1:5050/getWalkinDetails/${id}`,
+      url: `https://ogha.onrender.com/getWalkinDetails/${id}`,
     }).then((res) => {
       setFormValues({
         name: res.data[0].fullName || "",
@@ -51,7 +51,7 @@ const WalkinRegisterForSpa = () => {
     const values = { name: formValues.name, phone: formValues.phone, email: formValues.email, packageId: packageData[0].id, packageName: packageData[0].packageName, packageCost: packageData[0].cost, service: packageData[0].forService, paymentStatus: "Not Paid",endDate:endDate, createdOn: CreatedOn, createdBy:cookie["staffId"] }
     axios({
       method: 'post',
-      url: 'http://127.0.0.1:5050/addsubscription',
+      url: 'https://ogha.onrender.com/addsubscription',
       data: values
     }).then(
       navigate("/account")
@@ -62,7 +62,7 @@ const WalkinRegisterForSpa = () => {
   const getPackageDetails = (e) => {
     axios({
       method: 'get',
-      url: `http://127.0.0.1:5050/getPackageDetails/${e.target.value}`
+      url: `https://ogha.onrender.com/getPackageDetails/${e.target.value}`
     }).then(res => {
       setPackageData(res.data);
       console.log(res.data);
@@ -78,7 +78,7 @@ const WalkinRegisterForSpa = () => {
   useEffect(() => {
     axios({
       method: "get",
-      url: "http://127.0.0.1:5050/spapackages"
+      url: "https://ogha.onrender.com/spapackages"
     }).then((res) => {
       setSelectPkg(res.data)
     })

@@ -34,7 +34,7 @@ const PaymentReports = () => {
 
     const getPaymentReport = () => {
         axios
-            .get(`http://127.0.0.1:5050/getpaymentreport?fromdate=${dateValue.fromdate}&todate=${dateValue.todate}&paymentStatus=${paymentStatus}`)
+            .get(`https://ogha.onrender.com/getpaymentreport?fromdate=${dateValue.fromdate}&todate=${dateValue.todate}&paymentStatus=${paymentStatus}`)
             .then((res) => {
                 console.log(res.data);
                 setPaymentData(res.data); // Uncomment this line to update state

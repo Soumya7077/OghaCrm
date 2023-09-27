@@ -19,7 +19,7 @@ const AssignList = () => {
     useEffect(() => {
         axios({
             method: 'get',
-            url: `http://127.0.0.1:5050/assignedlist/${cookie["staffId"]}`
+            url: `https://ogha.onrender.com/assignedlist/${cookie["staffId"]}`
         }).then(res => {
             const modifiedData = res.data
                 .map((entry, index) => ({

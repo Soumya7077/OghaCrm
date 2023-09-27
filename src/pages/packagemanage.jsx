@@ -67,7 +67,7 @@ const PackageManage = () => {
     if (id) {
       axios({
         method: 'put',
-        url: `http://127.0.0.1:5050/updatePackage/${id}`,
+        url: `https://ogha.onrender.com/updatePackage/${id}`,
         data: packageData
       }).then(
         navigate("/packagegrid")
@@ -76,7 +76,7 @@ const PackageManage = () => {
     else {
       axios({
         method: 'post',
-        url: 'http://127.0.0.1:5050/addpackges',
+        url: 'https://ogha.onrender.com/addpackges',
         data: packageData,
       }).then(
         navigate("/packagegrid")
@@ -87,7 +87,7 @@ const PackageManage = () => {
   useEffect(() => {
     axios({
       method: 'get',
-      url: `http://127.0.0.1:5050/getPackageDetails/${id}`
+      url: `https://ogha.onrender.com/getPackageDetails/${id}`
     }).then(res => {
       console.log(res.data);
       setPackageData({

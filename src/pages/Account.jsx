@@ -22,7 +22,7 @@ const Account = () => {
     useEffect(() => {
         axios({
             method:"get",
-            url:'http://127.0.0.1:5050/getCustomerList'
+            url:'https://ogha.onrender.com/getCustomerList'
         }).then(res => {
             const modifiedData = res.data
                 .map((entry, index) => ({
@@ -37,7 +37,7 @@ const Account = () => {
     {
         axios({
             method:'get',
-            url:`http://127.0.0.1:5050/getCustomerListById/${e.target.value}`
+            url:`https://ogha.onrender.com/getCustomerListById/${e.target.value}`
         }).then(res => {
             setVoucher({
                 towards:res.data.userName,

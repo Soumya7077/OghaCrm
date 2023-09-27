@@ -21,7 +21,7 @@ const CustomerAttendance = () => {
     useEffect(() => {
         axios({
           method: "get",
-          url: "http://127.0.0.1:5050/getCustomerList",
+          url: "https://ogha.onrender.com/getCustomerList",
         }).then((res) => {
           const modifiedData = res.data.map((entry, index) => ({
             srNo: index + 1,
@@ -33,7 +33,7 @@ const CustomerAttendance = () => {
     
           const promises = modifiedData.map((entry) => {
             return axios.get(
-              `http://127.0.0.1:5050/getCustomerAttendence/${entry.id}`
+              `https://ogha.onrender.com/getCustomerAttendence/${entry.id}`
             );
           });
     
@@ -78,13 +78,13 @@ const CustomerAttendance = () => {
     {
         axios({
             method:'get',
-            url:`http://127.0.0.1:5050/getCustomerListById/${e}`
+            url:`https://ogha.onrender.com/getCustomerListById/${e}`
         }).then(res => {
             setdata(res.data);
         })
         axios({
             method:'get',
-            url:'http://127.0.0.1:5050/getCustomerAttendence/'+e
+            url:'https://ogha.onrender.com/getCustomerAttendence/'+e
         }).then(res => {
            console.log(res.data);
         })
@@ -113,7 +113,7 @@ const CustomerAttendance = () => {
         else {
             axios({
                 method:'post',
-                url:'http://127.0.0.1:5050/saveattendence',
+                url:'https://ogha.onrender.com/saveattendence',
                 data:values
             }).then(
                 window.location.reload()

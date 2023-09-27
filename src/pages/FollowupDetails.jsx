@@ -94,7 +94,7 @@ const FollowupGrids = () => {
   useEffect(() => {
     axios({
       method: "get",
-      url: `http://127.0.0.1:5050/followupdetails/${id}`,
+      url: `https://ogha.onrender.com/followupdetails/${id}`,
     }).then((res) => {
       console.log(res.data);
       const modifiedData = res.data.map((entry, index) => ({
@@ -116,7 +116,7 @@ const FollowupGrids = () => {
     if (id) {
       // Fetch lead data using editId and populate formData
       console.log(`Fetching data for editId: ${id}`);
-      axios.get(`http://127.0.0.1:5050/leadscapture/${id}`).then((res) => {
+      axios.get(`https://ogha.onrender.com/leadscapture/${id}`).then((res) => {
         console.log("API response:", res.data);
         setData(res.data);
         // setFormData(res.data);
@@ -207,7 +207,7 @@ const FollowupGrids = () => {
     if (isValid) {
       axios({
         method: "post",
-        url: "http://127.0.0.1:5050/addFollowupDetails",
+        url: "https://ogha.onrender.com/addFollowupDetails",
         data: values,
       }).then(
         window.location.reload()

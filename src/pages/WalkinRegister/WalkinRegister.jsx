@@ -34,7 +34,7 @@
 //   useEffect(() => {
 //     axios({
 //       method: "get",
-//       url: `http://127.0.0.1:5050/getWalkinDetails/${id}`,
+//       url: `https://ogha.onrender.com/getWalkinDetails/${id}`,
 //     }).then((res) => {
 //       setFormValues({
 //         name: res.data[0].fullName || "",
@@ -49,7 +49,7 @@
 //   function handleSubmit() {
 //     axios({
 //       method: 'post',
-//       url: 'http://127.0.0.1:5050/selectPackage',
+//       url: 'https://ogha.onrender.com/selectPackage',
 //       data: formValues
 //     }).then(
 //       navigate("/dashboard")
@@ -61,7 +61,7 @@
 //   useEffect(() => {
 //     axios({
 //       method: "get",
-//       url: "http://127.0.0.1:5050/getpackages"
+//       url: "https://ogha.onrender.com/getpackages"
 //     }).then((res) => {
 //       setSelectPkg(res.data)
 //     })
@@ -271,7 +271,7 @@ const WalkinRegister = () => {
   useEffect(() => {
     axios({
       method: "get",
-      url: `http://127.0.0.1:5050/getWalkinDetails/${id}`,
+      url: `https://ogha.onrender.com/getWalkinDetails/${id}`,
     }).then((res) => {
       setFormValues({
         name: res.data[0].fullName || "",
@@ -286,7 +286,7 @@ const WalkinRegister = () => {
   function handleSubmit() {
     axios({
       method: 'post',
-      url: 'http://127.0.0.1:5050/selectPackage',
+      url: 'https://ogha.onrender.com/selectPackage',
       data: formValues
     }).then(
       navigate("/dashboard")
@@ -298,7 +298,7 @@ const WalkinRegister = () => {
   useEffect(() => {
     axios({
       method: "get",
-      url: "http://127.0.0.1:5050/getpackages"
+      url: "https://ogha.onrender.com/getpackages"
     }).then((res) => {
       setSelectPkg(res.data)
     })

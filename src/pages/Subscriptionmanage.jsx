@@ -18,9 +18,9 @@ const LeadsSubscription = () => {
 
     useEffect(() => {
         axios.all([
-            axios.get("http://127.0.0.1:5050/subscriberUser"),
-            axios.get("http://127.0.0.1:5050/getstaffdetails"),
-            axios.get("http://127.0.0.1:5050/getpackages")
+            axios.get("https://ogha.onrender.com/subscriberUser"),
+            axios.get("https://ogha.onrender.com/getstaffdetails"),
+            axios.get("https://ogha.onrender.com/getpackages")
         ]).then(axios.spread((subscriberRes, staffRes, packageRes) => {
             const modifiedData = subscriberRes.data.map((entry, index) => ({
                 srNo: index + 1,

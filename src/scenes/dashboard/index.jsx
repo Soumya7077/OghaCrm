@@ -55,7 +55,7 @@ const Dashboard = () => {
   useEffect(() => {
     axios({
       method:'get',
-      url:`http://127.0.0.1:5050/getWalkinCustomer`,
+      url:`https://ogha.onrender.com/getWalkinCustomer`,
     }).then(res => {
         console.log(res.data.length);
         setWalkin(res.data.length)
@@ -63,14 +63,14 @@ const Dashboard = () => {
 
     axios({
       method:'get',
-      url:`http://127.0.0.1:5050/getstaffdetails`
+      url:`https://ogha.onrender.com/getstaffdetails`
     }).then(res => {
       setStaff(res.data.length);
     })
 
     axios({
       method:'get',
-      url:'http://127.0.0.1:5050/leadscapture'
+      url:'https://ogha.onrender.com/leadscapture'
     }).then(res => {
       setLeads(res.data.length);
     })

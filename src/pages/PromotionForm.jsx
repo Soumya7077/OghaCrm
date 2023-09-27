@@ -54,7 +54,7 @@ const PromotionForm = () => {
   useEffect(() => {
     axios({
       method: 'get',
-      url: `http://127.0.0.1:5050/getPromotionDetails/${id}`
+      url: `https://ogha.onrender.com/getPromotionDetails/${id}`
     }).then(res => {
       setPromotionData({
         promotionName: res.data[0].promotionName,
@@ -96,13 +96,13 @@ const PromotionForm = () => {
       if (id) {
         axios({
           method: 'put',
-          url: `http://127.0.0.1:5050/updatepromotion/${id}`,
+          url: `https://ogha.onrender.com/updatepromotion/${id}`,
           data: promotionData,
         }).then( navigate('/promotiongrid'));
       } else {
         axios({
           method: 'post',
-          url: 'http://127.0.0.1:5050/addpromotion',
+          url: 'https://ogha.onrender.com/addpromotion',
           data: promotionData,
         }).then( navigate('/promotiongrid'));
       }

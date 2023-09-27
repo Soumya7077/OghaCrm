@@ -21,7 +21,7 @@ const ReceptionWalkinStaffForSalon = () => {
   useEffect(() => {
     axios({
       method: "get",
-      url: "http://127.0.0.1:5050/getWalkinCustomer",
+      url: "https://ogha.onrender.com/getWalkinCustomer",
     }).then((res) => {
       const walkingcustomer = res.data.map((item, index) => ({
         ...item,

@@ -21,7 +21,7 @@ const LeadsCapture = () => {
   useEffect(() => {
     axios({
       method: "get",
-      url: "http://127.0.0.1:5050/leadscapture",
+      url: "https://ogha.onrender.com/leadscapture",
     }).then((res) => {
       const modifiedData = res.data.map((entry, index) => ({
         srNo: index + 1, // Adding 1 to start Sr.No from 1
@@ -50,7 +50,7 @@ const LeadsCapture = () => {
     if (e.type === "click") {
       axios({
         method: "put",
-        url: `http://127.0.0.1:5050/deletelead/${leadId}`,
+        url: `https://ogha.onrender.com/deletelead/${leadId}`,
         data: { IsActive: 0 },
       }).then(window.location.reload());
     }
@@ -67,7 +67,7 @@ const LeadsCapture = () => {
   //   if (flag == true) {
   //     axios({
   //       method: "put",
-  //       url: `http://127.0.0.1:5050/deletelead/${e}`,
+  //       url: `https://ogha.onrender.com/deletelead/${e}`,
   //       data: isActiveValue,
   //     }).then(window.location.reload());
   //   } else {

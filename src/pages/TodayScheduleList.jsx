@@ -19,7 +19,7 @@ const TodaySchedule = () => {
     useEffect(() => {
         axios({
             method: 'get',
-            url: `http://127.0.0.1:5050/todayschedule/${cookie["staffId"]}`
+            url: `https://ogha.onrender.com/todayschedule/${cookie["staffId"]}`
         }).then(res => {
             const modifiedData = res.data
                 .map((entry, index) => ({

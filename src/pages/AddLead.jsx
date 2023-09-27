@@ -101,7 +101,7 @@ const AddLead = () => {
             const phoneNumber = formData.phoneNumber;
             axios({
               method: "get",
-              url: `http://127.0.0.1:5050/getWalkinData/${phoneNumber}`,
+              url: `https://ogha.onrender.com/getWalkinData/${phoneNumber}`,
             }).then((res) => {
               if (Object.keys(res.data).length > 0) {
                 setStyle({ display: "block" });
@@ -109,7 +109,7 @@ const AddLead = () => {
                 // If the mobile number is unique, proceed with form submission
                 axios({
                   method: "post",
-                  url: "http://127.0.0.1:5050/addlead",
+                  url: "https://ogha.onrender.com/addlead",
                   data: formData,
                 }).then(navigate("/leadscapture"));
               }
@@ -118,7 +118,7 @@ const AddLead = () => {
             // If it's in edit mode, directly update the lead
             axios({
               method: "put",
-              url: `http://127.0.0.1:5050/updatelead/${edit}`,
+              url: `https://ogha.onrender.com/updatelead/${edit}`,
               data: formData,
             }).then(navigate("/leadscapture"));
           }
@@ -126,7 +126,7 @@ const AddLead = () => {
           // If it's in edit mode, directly update the lead
           axios({
             method: "put",
-            url: `http://127.0.0.1:5050/updatelead/${edit}`,
+            url: `https://ogha.onrender.com/updatelead/${edit}`,
             data: formData,
           }).then(navigate("/leadscapture"));
         }
@@ -162,14 +162,14 @@ const AddLead = () => {
   //     const phoneNumber = formData.phoneNumber;
   //     axios({
   //       method: "get",
-  //       url: `http://127.0.0.1:5050/getWalkinData/${phoneNumber}`,
+  //       url: `https://ogha.onrender.com/getWalkinData/${phoneNumber}`,
   //     }).then((res) => {
   //         if(Object.keys(res.data).length > 0){
   //           setStyle({display:"block"});
   //         }else{
   //           axios({
   //             method: "post",
-  //             url: "http://127.0.0.1:5050/addlead",
+  //             url: "https://ogha.onrender.com/addlead",
   //             data: formData,
   //           }).then(navigate("/leadscapture"));
   //         }
@@ -178,7 +178,7 @@ const AddLead = () => {
   //   } else if (edit) {
   //     axios({
   //       method: "put",
-  //       url: `http://127.0.0.1:5050/updatelead/${edit}`,
+  //       url: `https://ogha.onrender.com/updatelead/${edit}`,
   //       data: formData,
   //     }).then(navigate("/leadscapture"));
   //     // setUpdate({ display: " Submit" });
@@ -187,7 +187,7 @@ const AddLead = () => {
   // };
      
   useEffect(() => {
-    axios.get(`http://127.0.0.1:5050/leadscaptureforedit/${edit}`).then((res) => {  
+    axios.get(`https://ogha.onrender.com/leadscaptureforedit/${edit}`).then((res) => {  
 
       setFormData({
         fullName: res.data.leadsCapture[0].fullName || "",

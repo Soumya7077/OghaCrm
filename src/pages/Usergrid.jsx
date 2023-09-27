@@ -19,7 +19,7 @@ const UserGrid = () => {
     useEffect(() => {
         axios({
             method:'get',
-            url:'http://127.0.0.1:5050/getstaffdetails'
+            url:'https://ogha.onrender.com/getstaffdetails'
         }).then(res => {
             const modifiedData = res.data.map((entry, index)=>({
                 srNo: index+1,
@@ -40,7 +40,7 @@ const UserGrid = () => {
         if(e.type === "click"){
             axios({
                 method:'put',
-                url:`http://127.0.0.1:5050/deletestaff/${staffId}`,
+                url:`https://ogha.onrender.com/deletestaff/${staffId}`,
                 data:{IsActive:0}
             }).then(
                 window.location.reload()

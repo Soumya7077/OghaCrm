@@ -17,7 +17,7 @@ const PackageGrid = () => {
     useEffect(() => {
         axios({
             method: 'get',
-            url: 'http://127.0.0.1:5050/getpackages'
+            url: 'https://ogha.onrender.com/getpackages'
         }).then(res => {
             const modifiedData = res.data
                 .map((entry, index) => ({
@@ -38,7 +38,7 @@ const PackageGrid = () => {
         if (e.type === "click") {
             axios({
                 method: 'put',
-                url: `http://127.0.0.1:5050/deletePackage/${packageId}`,
+                url: `https://ogha.onrender.com/deletePackage/${packageId}`,
                 data: { IsActive: 0 }
             }).then(
                 window.location.reload()

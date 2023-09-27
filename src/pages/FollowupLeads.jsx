@@ -18,7 +18,7 @@ const LeadsFollowup = () => {
   // useEffect(() => {
   //   axios({
   //     method: 'get',
-  //     url: 'http://127.0.0.1:5050/getfollowupdata'
+  //     url: 'https://ogha.onrender.com/getfollowupdata'
   //   }).then(res => {
   //     const modifiedData = res.data.map((entry, index) => ({
   //       srNo: index + 1,
@@ -34,7 +34,7 @@ const LeadsFollowup = () => {
   //     }));
   
   //     const promises = modifiedData.map(entry => {
-  //       return axios.get(`http://127.0.0.1:5050/leadscapture/${entry.leadId}`)
+  //       return axios.get(`https://ogha.onrender.com/leadscapture/${entry.leadId}`)
   //         .then(response => ({ leadId: entry.leadId, relatedInfo: response.data }));
   //     });
   
@@ -59,7 +59,7 @@ const LeadsFollowup = () => {
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const response = await axios.get('http://127.0.0.1:5050/getfollowupdata');
+        const response = await axios.get('https://ogha.onrender.com/getfollowupdata');
         const modifiedData = response.data.map((entry, index) => ({
           srNo: index + 1,
           ...entry,
@@ -75,7 +75,7 @@ const LeadsFollowup = () => {
 
         for (const entry of modifiedData) {
           try {
-            const relatedResponse = await axios.get(`http://127.0.0.1:5050/leadscapture/${entry.leadId}`);
+            const relatedResponse = await axios.get(`https://ogha.onrender.com/leadscapture/${entry.leadId}`);
             const relatedInfo = relatedResponse.data;
             
             if (relatedInfo.length > 0) {

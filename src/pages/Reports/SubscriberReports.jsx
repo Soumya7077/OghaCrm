@@ -29,7 +29,7 @@ const SubscriberReports = () => {
 
     const getSubscriberData = () => {
         axios
-            .get(`http://127.0.0.1:5050/getsubscriberreport?fromdate=${dateValue.fromdate}&todate=${dateValue.todate}`)
+            .get(`https://ogha.onrender.com/getsubscriberreport?fromdate=${dateValue.fromdate}&todate=${dateValue.todate}`)
             .then((res) => {
                 setSubscriberData(res.data);
             })

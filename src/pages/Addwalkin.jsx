@@ -48,14 +48,14 @@ const AddWalkin = () => {
     if (id) {
       axios({
         method: "put",
-        url: `http://127.0.0.1:5050/updateWalkin/${id}`,
+        url: `https://ogha.onrender.com/updateWalkin/${id}`,
         data: formData,
       }).then(navigate("/receptionwalkin"));
       // setUpdate({ display: " Submit" });
     } else if (existingRecord == true) {
       axios({
         method: "put",
-        url: `http://127.0.0.1:5050/updateleadstowalkin/${formData.phone}`,
+        url: `https://ogha.onrender.com/updateleadstowalkin/${formData.phone}`,
         data: {
           type: "Walkin",
           remark: formData.remark,
@@ -65,7 +65,7 @@ const AddWalkin = () => {
     } else {
       axios({
         method: "post",
-        url: "http://127.0.0.1:5050/addWalkin",
+        url: "https://ogha.onrender.com/addWalkin",
         data: formData,
       }).then(navigate("/receptionwalkin"));
     }
@@ -75,7 +75,7 @@ const AddWalkin = () => {
   useEffect(() => {
     axios({
       method: "get",
-      url: `http://127.0.0.1:5050/getWalkinDetails/${id}`,
+      url: `https://ogha.onrender.com/getWalkinDetails/${id}`,
     }).then((res) => {
       setFormData({
         name: res.data[0].fullName || "",
@@ -127,7 +127,7 @@ const AddWalkin = () => {
     const phoneNumber = formData.phone;
     axios({
       method: "get",
-      url: `http://127.0.0.1:5050/getWalkinData/${phoneNumber}`,
+      url: `https://ogha.onrender.com/getWalkinData/${phoneNumber}`,
     }).then((res) => {
       console.log("verify", res.data);
       if (res.data) {

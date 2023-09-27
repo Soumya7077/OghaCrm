@@ -90,7 +90,7 @@ const UserForm = () => {
   useEffect(() => {
     axios({
       method: 'get',
-      url: 'http://127.0.0.1:5050/getstafftype'
+      url: 'https://ogha.onrender.com/getstafftype'
     }).then(res => {
       setType(res.data);
     })
@@ -99,7 +99,7 @@ const UserForm = () => {
   useEffect(() => {
     axios({
       method: 'get',
-      url: `http://127.0.0.1:5050/editstaff/${id}`
+      url: `https://ogha.onrender.com/editstaff/${id}`
     }).then(res => {
       setFormData({
         name: res.data[0].FullName || '',
@@ -198,7 +198,7 @@ const UserForm = () => {
       if (id) {
         axios({
           method: 'put',
-          url: `http://127.0.0.1:5050/updatestaff/${id}`,
+          url: `https://ogha.onrender.com/updatestaff/${id}`,
           data: formData
         }).then(
           navigate("/usermanage")
@@ -206,7 +206,7 @@ const UserForm = () => {
       } else {
         axios({
           method: 'post',
-          url: 'http://127.0.0.1:5050/addstaff',
+          url: 'https://ogha.onrender.com/addstaff',
           data: formData
         }).then(
           navigate("/usermanage")
