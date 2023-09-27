@@ -7,7 +7,7 @@ var nodemailer = require("nodemailer");
 var mongoose = require("mongoose");
 
 var connectionString = "mongodb+srv://Ogha:Ogha2023@cluster0.aryzpwf.mongodb.net/Ogha?retryWrites=true&w=majority&appName=AtlasApp";
-mongoose.connect(connectionString, {
+const db = mongoose.connect(connectionString, {
   useNewUrlParser: true,
   useUnifiedTopology: true,
   // Add other options here, if needed
