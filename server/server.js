@@ -259,7 +259,7 @@ app.post("/addlead", async (req, res) => {
 app.get("/leadscapture", async (req, res) => {
   try {
     const leads = await leadsCapture.find({ IsActive: 1, type: "Lead" });
-    console.log("Found leads:", leads); // Log the leads variable
+    // console.log("Found leads:", leads); // Log the leads variable
     res.send(leads);
   } catch (error) {
     console.error("Error retrieving leads:", error);
