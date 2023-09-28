@@ -919,7 +919,7 @@ app.post("/addpromotion", async (req, res) => {
     .lean();
     const newId = lastPromotion ? lastPromotion.id + 1 : 1;
 
-    console.log("=============================================", lastPromotion);
+    // console.log("=============================================", lastPromotion.id);
 
     // Create a new promotion object
     const promotion = new promotionManage({
