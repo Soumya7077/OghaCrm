@@ -916,7 +916,7 @@ app.post("/addpromotion", async (req, res) => {
     const lastPromotion = await promotionManage.findOne({}, { sort: { id: -1 } });
     const newId = lastPromotion ? lastPromotion.id + 1 : 1;
 
-    console.log(newId);
+    console.log(newId,"===========================");
 
     // Create a new promotion object
     const promotion = new promotionManage({
