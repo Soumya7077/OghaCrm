@@ -203,55 +203,57 @@ app.get("/getstafftype", async (req, res) => {
 
 // Post lead capture data to the database.
 
-app.post("/addlead", (req, res) => {
-  mongoose.connect(connectionString).then((clientObject) => {
-    var database = clientObject.db("Ogha");
-    var folloupDateTime = new Date(req.body.folloupDateTime);
+app.post("/addlead", async (req, res) => {
+  try {
+    const folloupDateTime = new Date(req.body.folloupDateTime);
+    const CreatedOn = new Date(req.body.CreatedOn);
 
-    Promise.all([
-      database.collection("leadsCapture").findOne({}, { sort: { id: -1 } }),
-      database.collection("leadsFollowup").findOne({}, { sort: { id: -1 } }),
-    ]).then(([lastLeadCapture, lastLeadFollowup]) => {
-      const newLeadCaptureID = (lastLeadCapture ? lastLeadCapture.id : 0) + 1;
-      const newLeadFollowupID =
-        (lastLeadFollowup ? lastLeadFollowup.id : 0) + 1;
-      const CreatedOn = new Date(req.body.CreatedOn);
+    // Find the latest lead and follow-up IDs
+    const [lastLeadCapture, lastLeadFollowup] = await Promise.all([
+      leadsCapture.findOne({}, { sort: { id: -1 } }).exec(),
+      leadsFollowup.findOne({}, { sort: { id: -1 } }).exec(),
+    ]);
 
-      var leadname = {
-        id: newLeadCaptureID,
-        fullName: req.body.fullName,
-        phoneNumber: req.body.phoneNumber,
-        emailAddress: req.body.emailAddress,
-        jobTitle: req.body.jobTitle,
-        address: req.body.address,
-        source: req.body.source,
-        type: req.body.type,
-        // visitDate: req.body.folloupDateTime,
-        IsActive: 1,
-        CreatedOn: CreatedOn,
-      };
+    const newLeadCaptureID = (lastLeadCapture ? lastLeadCapture.id : 0) + 1;
+    const newLeadFollowupID = (lastLeadFollowup ? lastLeadFollowup.id : 0) + 1;
 
-      var leadFollowup = {
-        id: newLeadFollowupID,
-        leadId: newLeadCaptureID,
-        criteria: req.body.isInterested,
-        folloupDateTime: folloupDateTime,
-        remarks: req.body.remark,
-        CreatedOn: CreatedOn,
-        IsActive: 1,
-      };
-      database
-        .collection("leadsCapture")
-        .insertOne(leadname)
-        .then((result) => {});
-      database
-        .collection("leadsFollowup")
-        .insertOne(leadFollowup)
-        .then((result) => {
-          console.log("Lead Added");
-        });
-    });
-  });
+    // Create the lead object
+    const leadname = {
+      id: newLeadCaptureID,
+      fullName: req.body.fullName,
+      phoneNumber: req.body.phoneNumber,
+      emailAddress: req.body.emailAddress,
+      jobTitle: req.body.jobTitle,
+      address: req.body.address,
+      source: req.body.source,
+      type: req.body.type,
+      IsActive: 1,
+      CreatedOn: CreatedOn,
+    };
+
+    // Create the lead follow-up object
+    const leadFollowup = {
+      id: newLeadFollowupID,
+      leadId: newLeadCaptureID,
+      criteria: req.body.isInterested,
+      folloupDateTime: folloupDateTime,
+      remarks: req.body.remark,
+      CreatedOn: CreatedOn,
+      IsActive: 1,
+    };
+
+    // Use Mongoose to insert the lead and lead follow-up
+    await Promise.all([
+      leadsCapture.create(leadname),
+      leadsFollowup.create(leadFollowup),
+    ]);
+
+    console.log("Lead Added");
+    res.status(200).json({ message: "Lead Added" });
+  } catch (error) {
+    console.error("Error adding lead:", error);
+    res.status(500).json({ error: "An error occurred while adding the lead" });
+  }
 });
 
 app.get("/leadscapture", async (req, res) => {
@@ -290,32 +292,25 @@ app.get("/getfollowupdata", async (req, res) => {
 
 // Followup details post method
 
-app.post("/addFollowupDetails", (req, res) => {
-  mongoose.connect(connectionString).then((clientObject) => {
-    var database = clientObject.db("Ogha");
-    database
-      .collection("leadsFollowup")
-      .findOne({}, { sort: { id: -1 } })
-      .then((lastdocuments) => {
-        const lastid = lastdocuments ? lastdocuments.id : 0;
-        const newPID = lastid + 1;
+app.post("/addFollowupDetails", async (req, res) => {
+  try {
+    // Create a new follow-up object
+    const newFollowup = new leadsFollowup({
+      leadId: parseInt(req.body.leadId),
+      criteria: req.body.criteria,
+      folloupDateTime: req.body.visitDate,
+      remarks: req.body.remark,
+    });
 
-        var leadFollowup = {
-          id: newPID,
-          leadId: parseInt(req.body.leadId),
-          criteria: req.body.criteria,
-          folloupDateTime: req.body.visitDate,
-          remarks: req.body.remark,
-        };
+    // Save the new follow-up document
+    await newFollowup.save();
 
-        database
-          .collection("leadsFollowup")
-          .insertOne(leadFollowup)
-          .then((result) => {
-            // console.log("Plant Added");
-          });
-      });
-  });
+    console.log("Follow-up Details Added");
+    res.status(200).json({ message: "Follow-up Details Added" });
+  } catch (error) {
+    console.error("Error adding follow-up details:", error);
+    res.status(500).json({ error: "An error occurred while adding follow-up details" });
+  }
 });
 
 // Followup details get method
@@ -528,69 +523,63 @@ app.get("/getWalkinCustomer", async (req, res) => {
 
 // Customer Walkin Post Method
 
-app.post("/addWalkin", (req, res) => {
-  mongoose.connect(connectionString).then((clientObject) => {
-    var database = clientObject.db("Ogha");
-    database
-      .collection("leadsCapture")
-      .findOne({}, { sort: { id: -1 } })
-      .then((lastdocuments) => {
-        const lastId = lastdocuments ? lastdocuments.id : 0;
-        const newId = lastId + 1;
+app.post("/addWalkin", async (req, res) => {
+  try {
+    // Find the latest ID in the leadsCapture collection
+    const lastLeadCapture = await leadsCapture.findOne({}, { sort: { id: -1 } }).exec();
+    const lastId = lastLeadCapture ? lastLeadCapture.id : 0;
+    const newId = lastId + 1;
 
-        const walkinCustomer = {
-          id: newId,
-          fullName: req.body.name,
-          phoneNumber: req.body.phone,
-          type: "Walkin",
-          emailAddress: req.body.email,
-          Remark: req.body.remark,
-          CreatedOn: new Date(req.body.CreatedOn),
-          CreatedBy: parseInt(req.body.CreatedBy),
-          IsActive: 1,
-        };
+    // Create a new Walkin customer object
+    const walkinCustomer = new leadsCapture({
+      id: newId,
+      fullName: req.body.name,
+      phoneNumber: req.body.phone,
+      type: "Walkin",
+      emailAddress: req.body.email,
+      Remark: req.body.remark,
+      CreatedOn: new Date(req.body.CreatedOn),
+      CreatedBy: parseInt(req.body.CreatedBy),
+      IsActive: 1,
+    });
 
-        // database.collection("leadsCapture").insertOne(walkinCustomer).then(result => {
-        //   console.log("Walkin Customer Added");
-        // })
+    // Save the new Walkin customer document
+    await walkinCustomer.save();
 
-        database
-          .collection("leadsCapture")
-          .insertOne(walkinCustomer)
-          .then((result) => {
-            console.log("Walkin Customer Added");
-          });
-      });
-  });
+    console.log("Walkin Customer Added");
+    res.status(200).json({ message: "Walkin Customer Added" });
+  } catch (error) {
+    console.error("Error adding Walkin customer:", error);
+    res.status(500).json({ error: "An error occurred while adding the Walkin customer" });
+  }
 });
 
 // Edit method for Walkin Customers
 
-app.get("/getWalkinDetails/:id", (req, res) => {
-  var id = parseInt(req.params.id);
+app.get("/getWalkinDetails/:id", async (req, res) => {
+  try {
+    const id = parseInt(req.params.id);
+    const walkinDetails = await leadsCapture.find({ id: id }).exec();
 
-  mongoose.connect(connectionString).then((clientObject) => {
-    var database = clientObject.db("Ogha");
-    database
-      .collection("leadsCapture")
-      .find({ id: id })
-      .toArray()
-      .then((documents) => {
-        res.send(documents);
-        res.end();
-      });
-  });
+    if (walkinDetails.length === 0) {
+      res.status(404).json({ error: "Walkin details not found" });
+    } else {
+      res.send(walkinDetails);
+    }
+  } catch (error) {
+    console.error("Error retrieving Walkin details:", error);
+    res.status(500).json({ error: "An error occurred" });
+  }
 });
 
 // Update method for Walkin Customers
 
-app.put("/updateWalkin/:id", (req, res) => {
-  var id = parseInt(req.params.id);
+app.put("/updateWalkin/:id", async (req, res) => {
+  try {
+    const id = parseInt(req.params.id);
 
-  mongoose.connect(connectionString).then((clientObject) => {
-    var database = clientObject.db("Ogha");
-    var findQuery = { id: id };
-    var updateQuery = {
+    // Find the Walkin customer by ID and update its details
+    const updateQuery = {
       $set: {
         fullName: req.body.name,
         phoneNumber: req.body.phone,
@@ -602,52 +591,54 @@ app.put("/updateWalkin/:id", (req, res) => {
       },
     };
 
-    database
-      .collection("leadsCapture")
-      .updateOne(findQuery, updateQuery)
-      .then((result) => {
-        console.log("Walkin Customer Updated");
-        res.redirect("/receptionwalkin");
-        res.end();
-      });
-  });
+    const result = await leadsCapture.updateOne({ id: id }, updateQuery).exec();
+
+    if (result.nModified === 0) {
+      res.status(404).json({ error: "Walkin customer not found" });
+    } else {
+      console.log("Walkin Customer Updated");
+      res.status(200).json({ message: "Walkin Customer Updated" });
+    }
+  } catch (error) {
+    console.error("Error updating Walkin customer:", error);
+    res.status(500).json({ error: "An error occurred while updating Walkin customer" });
+  }
 });
 
 // Post Method for Staff
 
-app.post("/addstaff", (req, res) => {
-  mongoose.connect(connectionString).then((clientObject) => {
-    var database = clientObject.db("Ogha");
-    database
-      .collection("StaffManage")
-      .findOne({}, { sort: { id: -1 } })
-      .then((lastdocuments) => {
-        const lastId = lastdocuments ? lastdocuments.id : 0;
-        const newId = lastId + 1;
+app.post("/addstaff", async (req, res) => {
+  try {
+    // Find the latest ID in the StaffManage collection
+    const lastStaff = await staffManage.findOne({}, { sort: { id: -1 } }).exec();
+    const lastId = lastStaff ? lastStaff.id : 0;
+    const newId = lastId + 1;
 
-        const staff = {
-          id: newId,
-          FullName: req.body.name,
-          PhoneNumber: req.body.phone,
-          Email: req.body.email,
-          JobTitle: req.body.job,
-          Address: req.body.address,
-          UserType: parseInt(req.body.usertype),
-          UserName: req.body.username,
-          Password: req.body.password,
-          CreatedOn: new Date(req.body.CreatedOn),
-          createdBy: parseInt(req.body.createdBy),
-          IsActive: 1,
-        };
+    // Create a new staff object
+    const staff = new staffManage({
+      id: newId,
+      FullName: req.body.name,
+      PhoneNumber: req.body.phone,
+      Email: req.body.email,
+      JobTitle: req.body.job,
+      Address: req.body.address,
+      UserType: parseInt(req.body.usertype),
+      UserName: req.body.username,
+      Password: req.body.password,
+      CreatedOn: new Date(req.body.CreatedOn),
+      createdBy: parseInt(req.body.createdBy),
+      IsActive: 1,
+    });
 
-        database
-          .collection("StaffManage")
-          .insertOne(staff)
-          .then((result) => {
-            console.log("Staff Added");
-          });
-      });
-  });
+    // Save the new staff document
+    await staff.save();
+
+    console.log("Staff Added");
+    res.status(200).json({ message: "Staff Added" });
+  } catch (error) {
+    console.error("Error adding staff:", error);
+    res.status(500).json({ error: "An error occurred while adding staff" });
+  }
 });
 
 // Get Method for Staff
@@ -665,30 +656,31 @@ app.get("/getstaffdetails", async (req, res) => {
 
 // Edit Method for Staff
 
-app.get("/editstaff/:id", (req, res) => {
-  var id = parseInt(req.params.id);
+app.get("/editstaff/:id", async (req, res) => {
+  try {
+    const id = parseInt(req.params.id);
 
-  mongoose.connect(connectionString).then((clientObject) => {
-    var database = clientObject.db("Ogha");
-    database
-      .collection("StaffManage")
-      .find({ id: id })
-      .toArray()
-      .then((documents) => {
-        res.send(documents);
-        res.end();
-      });
-  });
+    // Find staff details based on the provided ID
+    const staffDetails = await staffManage.find({ id: id }).exec();
+
+    if (staffDetails.length === 0) {
+      res.status(404).json({ error: "Staff details not found" });
+    } else {
+      res.send(staffDetails);
+    }
+  } catch (error) {
+    console.error("Error retrieving staff details for editing:", error);
+    res.status(500).json({ error: "An error occurred" });
+  }
 });
 
 // update method for staff
-app.put("/updatestaff/:id", (req, res) => {
-  var id = parseInt(req.params.id);
+app.put("/updatestaff/:id", async (req, res) => {
+  try {
+    const id = parseInt(req.params.id);
 
-  mongoose.connect(connectionString).then((clientObject) => {
-    var database = clientObject.db("Ogha");
-    var findQuery = { id: id };
-    var updateQuery = {
+    // Create an update object with the provided data
+    const updateQuery = {
       $set: {
         FullName: req.body.name,
         PhoneNumber: req.body.phone,
@@ -702,69 +694,73 @@ app.put("/updatestaff/:id", (req, res) => {
         modifiedBy: parseInt(req.body.createdBy),
       },
     };
-    database
-      .collection("StaffManage")
-      .updateOne(findQuery, updateQuery)
-      .then((result) => {
-        console.log("Staff Updated");
-        res.redirect("/usermanage");
-        res.end();
-      });
-  });
+
+    // Find and update the staff document based on the provided ID
+    const result = await staffManage.updateOne({ id: id }, updateQuery).exec();
+
+    if (result.nModified === 0) {
+      res.status(404).json({ error: "Staff not found or no changes were made" });
+    } else {
+      console.log("Staff Updated");
+      res.status(200).json({ message: "Staff Updated" });
+    }
+  } catch (error) {
+    console.error("Error updating staff:", error);
+    res.status(500).json({ error: "An error occurred while updating staff" });
+  }
 });
 
 // Delete(Put) method for staff
 
-app.put("/deletestaff/:id", (req, res) => {
-  var id = parseInt(req.params.id);
+app.put("/deletestaff/:id", async (req, res) => {
+  try {
+    const id = parseInt(req.params.id);
 
-  mongoose.connect(connectionString).then((clientObject) => {
-    var database = clientObject.db("Ogha");
-    var findQuery = { id: id };
-    var updateQuery = { $set: { IsActive: req.body.IsActive } };
+    // Create an update object to set IsActive based on the request body
+    const updateQuery = { $set: { IsActive: req.body.IsActive } };
 
-    database
-      .collection("StaffManage")
-      .updateOne(findQuery, updateQuery)
-      .then((result) => {
-        console.log("Staff Deleted Successfully");
-        res.redirect("/usermanage");
-        res.end();
-      });
-  });
+    // Find and update the staff document based on the provided ID
+    const result = await staffManage.updateOne({ id: id }, updateQuery).exec();
+
+    if (result.nModified === 0) {
+      res.status(404).json({ error: "Staff not found or no changes were made" });
+    } else {
+      console.log("Staff Deleted Successfully");
+      res.status(200).json({ message: "Staff Deleted Successfully" });
+    }
+  } catch (error) {
+    console.error("Error deleting staff:", error);
+    res.status(500).json({ error: "An error occurred while deleting staff" });
+  }
 });
 
 // Get staff data by user type
-app.get("/getStaffData/:type", (req, res) => {
-  var type = parseInt(req.params.type);
+app.get("/getStaffData/:type", async (req, res) => {
+  try {
+    const type = parseInt(req.params.type);
 
-  mongoose.connect(connectionString).then((clientObject) => {
-    var database = clientObject.db("Ogha");
-    database
-      .collection("StaffManage")
-      .find({ UserType: type })
-      .toArray()
-      .then((documents) => {
-        res.send(documents);
-        res.end();
-      });
-  });
+    // Find staff data based on the provided user type
+    const staffData = await StaffManage.find({ UserType: type }).exec();
+
+    res.send(staffData);
+  } catch (error) {
+    console.error("Error retrieving staff data:", error);
+    res.status(500).json({ error: "An error occurred" });
+  }
 });
 
 // Get method for package manage
 
-app.get("/getpackages", (req, res) => {
-  mongoose.connect(connectionString).then((clientObject) => {
-    var database = clientObject.db("Ogha");
-    database
-      .collection("packageManagement")
-      .find({ IsActive: 1 })
-      .toArray()
-      .then((documents) => {
-        res.send(documents);
-        res.end();
-      });
-  });
+app.get("/getpackages", async (req, res) => {
+  try {
+    // Find packages with IsActive status equal to 1
+    const packages = await packageManagement.find({ IsActive: 1 }).exec();
+
+    res.send(packages);
+  } catch (error) {
+    console.error("Error retrieving packages:", error);
+    res.status(500).json({ error: "An error occurred" });
+  }
 });
 
 // Post method for packages
