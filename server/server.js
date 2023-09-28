@@ -189,6 +189,11 @@ function convertHtmlDescriptionToCommaSeparated(htmlDescription) {
   return commaSeparatedDescription;
 }
 
+
+app.get('/*', (req, res) => {
+  res.sendFile(path.join(__dirname, 'public', 'index.html'));
+});
+
 // Get method for stafftype
 
 app.get("/getstafftype", async (req, res) => {
