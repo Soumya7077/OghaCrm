@@ -85,7 +85,7 @@ const UserGrid = () => {
         {
             field: "action",
             headerName: "Action",
-            width:100,
+            width:150,
             renderCell: (params) => (
                 <Typography>
                     <button className="btn  me-2" title="Edit" ><Link className="btn" style={{color:'#0088CE'}} to={`/editstaff/${params.id}`}><Edit /></Link></button>
