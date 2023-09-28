@@ -5,7 +5,6 @@ const bodyParser = require("body-parser");
 const cheerio = require("cheerio");
 var nodemailer = require("nodemailer");
 var mongoose = require("mongoose");
-const path = require("path");
 
 var connectionString = "mongodb+srv://Ogha:Ogha2023@cluster0.aryzpwf.mongodb.net/Ogha?retryWrites=true&w=majority&appName=AtlasApp";
 mongoose.connect(connectionString, {
@@ -191,9 +190,6 @@ function convertHtmlDescriptionToCommaSeparated(htmlDescription) {
 }
 
 
-app.get('/*', (req, res) => {
-  res.sendFile(path.join(__dirname, 'public', 'index.html'));
-});
 
 // Get method for stafftype
 
