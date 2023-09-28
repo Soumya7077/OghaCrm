@@ -45,7 +45,7 @@ const PromotionGrid = () => {
                 data:{IsActive:0}
             }).then(res => {
                 console.log(res.data);
-                window.location.reload();
+                // window.location.reload();
             });
         }
         console.log(promotionId);
