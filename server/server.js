@@ -165,7 +165,7 @@ const customerAttendence = mongoose.model("customerAttendence", customerAttenden
 const leadsFollowup = mongoose.model("leadsFollowup", leadsFollowupSchema, "leadsFollowup");
 const packageManagement = mongoose.model("packageManagement", packageManagementSchema, "packageManagement");
 const payment = mongoose.model("payment", paymentSchema, "payment");
-const promotion = mongoose.model("promotionManagement", promotionSchema, "promotionManagement");
+const promotionManage = mongoose.model("promotionManagement", promotionSchema, "promotionManagement");
 const subscriber = mongoose.model("subscriber", subscriberSchema, "subscriber");
 
 var app = express();
@@ -740,7 +740,7 @@ app.get("/getStaffData/:type", async (req, res) => {
     const type = parseInt(req.params.type);
 
     // Find staff data based on the provided user type
-    const staffData = await StaffManage.find({ UserType: type }).exec();
+    const staffData = await staffManage.find({ UserType: type }).exec();
 
     res.send(staffData);
   } catch (error) {
@@ -870,11 +870,6 @@ app.put("/deletePackage/:id", async (req, res) => {
 // Display Gym Package
 app.get("/getGymPackage", async (req, res) => {
   try {
-    // Connect to the database
-    // const clientObject = await mongoose.connect(connectionString);
-    // const database = clientObject.db("Ogha");
-
-    // Retrieve gym packages that are active and for the service with ID 3
     const gymPackages = await packageManagement.find({ forService: "3", IsActive: 1 });
 
     // Send the retrieved gym packages as the response
@@ -893,10 +888,6 @@ app.get("/getCategorywisePackage/:type", async (req, res) => {
   try {
     const type = req.params.type;
 
-    // Connect to the database
-    const clientObject = await mongoose.connect(connectionString);
-    const database = clientObject.db("Ogha");
-
     // Retrieve category-wise packages that are active
     const categoryWisePackages = await packageManagement.find({ forService: type, IsActive: 1 });
 
@@ -912,239 +903,251 @@ app.get("/getCategorywisePackage/:type", async (req, res) => {
 
 // get package  data by type and id
 
-app.get("/getPackageDataByTypeId", (req, res) => {});
+// app.get("/getPackageDataByTypeId", (req, res) => {});
 
 // Post method for promotion msg
 
-app.post("/addpromotion", (req, res) => {
-  mongoose.connect(connectionString).then((clientObject) => {
-    var database = clientObject.db("Ogha");
+app.post("/addpromotion", async (req, res) => {
+  try {
+    // Find the last promotion to determine the new ID
+    const lastPromotion = await promotionManage.findOne({}, { sort: { id: -1 } });
+    const newId = lastPromotion ? lastPromotion.id + 1 : 1;
 
-    database
-      .collection("promotionManagement")
-      .findOne({}, { sort: { id: -1 } })
-      .then((lastdocuments) => {
-        const lastId = lastdocuments ? lastdocuments.id : 0;
-        const newId = lastId + 1;
+    // Create a new promotion object
+    const promotion = new promotionManage({
+      id: newId,
+      promotionName: req.body.promotionName,
+      promotionDate: new Date(req.body.promotionDate),
+      descriptionEmail: req.body.description1,
+      descriptionMessage: req.body.description2,
+      createdOn: new Date(req.body.createdOn),
+      createdBy: parseInt(req.body.createdBy),
+      IsActive: 1,
+    });
 
-        const promotion = {
-          id: newId,
-          promotionName: req.body.promotionName,
-          promotionDate: new Date(req.body.promotionDate),
-          descriptionEmail: req.body.description1,
-          descriptionMessage: req.body.description2,
-          createdOn: new Date(req.body.createdOn),
-          createdBy: parseInt(req.body.createdBy),
-          IsActive: 1,
-        };
+    // Save the new promotion to the database
+    await promotion.save();
 
-        database
-          .collection("promotionManagement")
-          .insertOne(promotion)
-          .then((result) => {
-            console.log("Promotion Added");
-            res.redirect("/promotiongrid");
-            res.end();
-          });
-      });
-  });
+    console.log("Promotion Added");
+    res.redirect("/promotiongrid");
+  } catch (error) {
+    console.error("Error adding promotion:", error);
+    res.status(500).send("Error adding promotion");
+  } finally {
+    res.end();
+  }
 });
 
 //  Get method for promotion
 
-app.get("/promotion", (req, res) => {
-  mongoose.connect(connectionString).then((clientObject) => {
-    var database = clientObject.db("Ogha");
-    database
-      .collection("promotionManagement")
-      .find({ IsActive: 1 })
-      .toArray()
-      .then((documents) => {
-        res.send(documents);
-        res.end();
-      });
-  });
+app.get("/promotion", async (req, res) => {
+  try {
+
+    // Fetch active promotions using the Mongoose model
+    const activePromotions = await promotionManage.find({ IsActive: 1 }).exec();
+
+    res.send(activePromotions);
+  } catch (error) {
+    console.error("Error fetching promotions:", error);
+    res.status(500).send("Error fetching promotions");
+  } finally {
+    res.end();
+  }
 });
 
 // Edit method for Promotion
 
-app.get("/getPromotionDetails/:id", (req, res) => {
-  var id = parseInt(req.params.id);
+app.get("/getPromotionDetails/:id", async (req, res) => {
+  try {
+    // Parse the promotion ID from the request parameters
+    const id = parseInt(req.params.id);
 
-  mongoose.connect(connectionString).then((clientObject) => {
-    var database = clientObject.db("Ogha");
-    database
-      .collection("promotionManagement")
-      .find({ id: id })
-      .toArray()
-      .then((documents) => {
-        res.send(documents);
-        res.end();
-      });
-  });
+    // Fetch promotion details by ID using the Mongoose model
+    const promotionDetails = await promotionManage.find({ id: id }).exec();
+
+    res.send(promotionDetails);
+  } catch (error) {
+    console.error("Error fetching promotion details:", error);
+    res.status(500).send("Error fetching promotion details");
+  } finally {
+    res.end();
+  }
 });
 
 // Update(put) method for promotion
 
-app.put("/updatepromotion/:id", (req, res) => {
-  var id = parseInt(req.params.id);
-  var findQuery = { id: id };
-  var updateQuery = {
-    $set: {
+app.put("/updatepromotion/:id", async (req, res) => {
+  try {
+    // Parse the promotion ID from the request parameters
+    const id = parseInt(req.params.id);
+
+    // Create an update object with the new values
+    const updateObject = {
       promotionName: req.body.promotionName,
       promotionDate: new Date(req.body.promotionDate),
       descriptionEmail: req.body.description1,
       descriptionMessage: req.body.description2,
       modifiedOn: new Date(req.body.createdOn),
       modifiedBy: parseInt(req.body.createdBy),
-    },
-  };
+    };
 
-  mongoose.connect(connectionString).then((clientObject) => {
-    var database = clientObject.db("Ogha");
-    database
-      .collection("promotionManagement")
-      .updateOne(findQuery, updateQuery)
-      .then((result) => {
-        console.log("Promotion Updated");
-        res.redirect("/promotiongrid");
-        res.end();
-      });
-  });
+    // Update the promotion using Mongoose
+    await promotionManage.updateOne({ id: id }, updateObject);
+
+    console.log("Promotion Updated");
+    res.redirect("/promotiongrid");
+  } catch (error) {
+    console.error("Error updating promotion:", error);
+    res.status(500).send("Error updating promotion");
+  } finally {
+    res.end();
+  }
 });
 
 // Delete method for promotion
 
-app.put("/deletePromotion/:id", (req, res) => {
-  var id = parseInt(req.params.id);
+app.put("/deletePromotion/:id", async (req, res) => {
+  try {
+    // Parse the promotion ID from the request parameters
+    const id = parseInt(req.params.id);
 
-  mongoose.connect(connectionString).then((clientObject) => {
-    var database = clientObject.db("Ogha");
-    var findQuery = { id: id };
-    var updateQuery = { $set: { IsActive: req.body.IsActive } };
+    // Create an update object to set IsActive based on the request body
+    const updateObject = {
+      $set: { IsActive: req.body.IsActive },
+    };
 
-    database
-      .collection("promotionManagement")
-      .updateOne(findQuery, updateQuery)
-      .then((result) => {
-        console.log("Promotion Deleted Successfully");
-        res.redirect("/promotiongrid");
-        res.end();
-      });
-  });
+    // Update the promotion using Mongoose
+    await promotionManage.updateOne({ id: id }, updateObject);
+
+    console.log("Promotion Deleted Successfully");
+    res.redirect("/promotiongrid");
+  } catch (error) {
+    console.error("Error deleting promotion:", error);
+    res.status(500).send("Error deleting promotion");
+  } finally {
+    res.end();
+  }
 });
 
 // Get method for subscriber
 
-app.get("/subscriberUser", (req, res) => {
-  mongoose.connect(connectionString).then((clientObject) => {
-    var database = clientObject.db("Ogha");
-    database
-      .collection("subscriber")
-      .find({})
-      .toArray()
-      .then((documents) => {
-        res.send(documents);
-        res.end();
-      });
-  });
+app.get("/subscriberUser", async (req, res) => {
+  try {
+    // Use the Mongoose model to query the "Subscriber" collection
+    const subscribers = await subscriber.find({});
+
+    res.send(subscribers);
+  } catch (error) {
+    console.error("Error fetching subscribers:", error);
+    res.status(500).send("Error fetching subscribers");
+  } finally {
+    res.end();
+  }
 });
 
 // get package details by selecting package add subscriber
 
-app.get("/addsubscriber", (req, res) => {
-  var id = parseInt(req.query.packageId);
-  // console.log(id);
-  mongoose.connect(connectionString).then((clientObject) => {
-    var database = clientObject.db("Ogha");
-    database
-      .collection("packageManagement")
-      .find({ id: id })
-      .toArray()
-      .then((documents) => {
-        res.send(documents);
-        res.end();
-      });
-  });
-});
+// app.get("/addsubscriber", (req, res) => {
+//   var id = parseInt(req.query.packageId);
+//   // console.log(id);
+//   mongoose.connect(connectionString).then((clientObject) => {
+//     var database = clientObject.db("Ogha");
+//     database
+//       .collection("packageManagement")
+//       .find({ id: id })
+//       .toArray()
+//       .then((documents) => {
+//         res.send(documents);
+//         res.end();
+//       });
+//   });
+// });
 
 // Post method for subscribed user
 
-app.post("/subscriberUser", (req, res) => {
-  mongoose.connect(connectionString).then((clientObject) => {
-    var database = clientObject.db("Ogha");
-    database
-      .collection("subscriber")
-      .findOne({}, { sort: { id: -1 } })
-      .then((lastdocuments) => {
-        const lastid = lastdocuments ? lastdocuments.id : 0;
-        const newPID = lastid + 1;
+app.post("/subscriberUser", async (req, res) => {
+  try {
 
-        var duration = parseInt(req.body.duration);
-        var startDate = new Date(req.body.startDate);
+    // Find the last subscriber document to determine the new ID
+    const lastSubscriber = await subscriber.findOne({}, {}, { sort: { id: -1 } });
 
-        // Make sure duration is a positive number
-        if (!isNaN(duration) && duration > 0) {
-          var endDate = new Date(startDate);
-          endDate.setDate(startDate.getDate() + duration);
-          console.log(endDate);
+    // Calculate the new subscriber ID
+    const newSubscriberID = (lastSubscriber ? lastSubscriber.id : 0) + 1;
 
-          var subscriber = {
-            id: newPID,
-            fullName: req.body.fullName,
-            phoneNumber: req.body.phoneNumber,
-            email: req.body.email,
-            subscriptionFor: req.body.subscriptionFor,
-            subscriptionType: req.body.subscriptionType,
-            startDate: startDate,
-            endDate: endDate,
-            amountPaid: req.body.amountPaid,
-            perferedTime: req.body.perferedTime,
-            userId: parseInt(req.body.userId),
-            createdBy: parseInt(req.body.createdBy),
-            createdOn: new Date(req.body.createdOn),
-            modifiedBy: req.body.modifiedBy,
-            modifiedOn: new Date(req.body.modifiedOn),
-            isActive: 1,
-          };
+    const duration = parseInt(req.body.duration);
+    const startDate = new Date(req.body.startDate);
 
-          database
-            .collection("subscriber")
-            .insertOne(subscriber)
-            .then((result) => {
-              console.log("Subscriber Added");
-            });
-        } else {
-          console.log("Invalid duration");
-        }
+    // Make sure duration is a positive number
+    if (!isNaN(duration) && duration > 0) {
+      const endDate = new Date(startDate);
+      endDate.setDate(startDate.getDate() + duration);
+
+      const newSubscriber = new subscriber({
+        id: newSubscriberID,
+        fullName: req.body.fullName,
+        phoneNumber: req.body.phoneNumber,
+        email: req.body.email,
+        subscriptionFor: req.body.subscriptionFor,
+        subscriptionType: req.body.subscriptionType,
+        startDate: startDate,
+        endDate: endDate,
+        amountPaid: req.body.amountPaid,
+        perferedTime: req.body.perferedTime,
+        userId: parseInt(req.body.userId),
+        createdBy: parseInt(req.body.createdBy),
+        createdOn: new Date(req.body.createdOn),
+        modifiedBy: req.body.modifiedBy,
+        modifiedOn: new Date(req.body.modifiedOn),
+        isActive: 1,
       });
-  });
+
+      // Save the new subscriber document
+      await newSubscriber.save();
+
+      console.log("Subscriber Added");
+    } else {
+      console.log("Invalid duration");
+    }
+
+    res.end();
+  } catch (error) {
+    console.error("Error adding subscriber:", error);
+    res.status(500).send("Error adding subscriber");
+  } finally {
+    res.end();
+  }
 });
 
 //  Getting one subscriber data
 
-app.get("/getsubscriberdetails/:id", (req, res) => {
-  var id = parseInt(req.params.id);
-  mongoose.connect(connectionString).then((clientObject) => {
-    var database = clientObject.db("Ogha");
-    database
-      .collection("subscriber")
-      .find({ id: id })
-      .toArray()
-      .then((documents) => {
-        res.send(documents);
-        res.end();
-      });
-  });
+app.get("/getsubscriberdetails/:id", async (req, res) => {
+  try {
+    const id = parseInt(req.params.id);
+
+    const subscribers = await subscriber.findOne({ id: id });
+
+    if (subscribers) {
+      res.send([subscribers]); // Wrap the subscriber in an array to match the expected response format
+    } else {
+      res.status(404).send("Subscriber not found");
+    }
+  } catch (error) {
+    console.error("Error retrieving subscriber details:", error);
+    res.status(500).send("Error retrieving subscriber details");
+  } finally {
+    res.end();
+  }
 });
 
 // Update Method for subscriber
 
-app.put("/updatesubscriber/:id", (req, res) => {
-  var id = parseInt(req.params.id);
-  var findQuery = { id: id };
-  var updateQuery = {
-    $set: {
+app.put("/updatesubscriber/:id", async (req, res) => {
+  try {
+    const id = parseInt(req.params.id);
+    const findQuery = { id: id };
+
+    // Create an object with updated subscriber details
+    const updatedSubscriber = {
       fullName: req.body.fullName,
       phoneNumber: req.body.phoneNumber,
       email: req.body.email,
@@ -1157,72 +1160,74 @@ app.put("/updatesubscriber/:id", (req, res) => {
       modifiedBy: parseInt(req.body.createdBy),
       userId: parseInt(req.body.userId),
       isActive: 1,
-    },
-  };
-  mongoose.connect(connectionString).then((clientObject) => {
-    var database = clientObject.db("Ogha");
-    database
-      .collection("subscriber")
-      .updateOne(findQuery, updateQuery)
-      .then((result) => {
-        console.log("Subscriber Updated");
-        res.redirect("/subscription");
-        res.end();
-      });
-  });
+    };
+
+    const result = await subscriber.updateOne(findQuery, updatedSubscriber);
+
+    if (result.nModified === 1) {
+      console.log("Subscriber Updated");
+      res.redirect("/subscription");
+    } else {
+      res.status(404).send("Subscriber not found or no changes made");
+    }
+  } catch (error) {
+    console.error("Error updating subscriber:", error);
+    res.status(500).send("Error updating subscriber");
+  } finally {
+    res.end();
+  }
 });
 
 // Getting the value in dropdown
 
-app.get("/customerList", (req, res) => {
-  mongoose.connect(connectionString).then((clientObject) => {
-    var database = clientObject.db("Ogha");
-    database
-      .collection("leadsCapture")
-      .find({ IsActive: 1 })
-      .toArray()
-      .then((documents) => {
-        res.send(documents);
-        res.end();
-      });
-  });
+app.get("/customerList", async (req, res) => {
+  try {
+    // Use the Mongoose model to find active customers
+    const customers = await leadsCapture.find({ IsActive: 1 }).exec();
+
+    res.send(customers);
+  } catch (error) {
+    console.error("Error fetching customer list:", error);
+    res.status(500).send("Error fetching customer list");
+  } finally {
+    res.end();
+  }
 });
 
 // Gym, Spa and Salon Get Method
 
-app.get("/getStaff/:getData", (req, res) => {
-  var type = parseInt(req.params.getData);
-  mongoose.connect(connectionString).then((clientObject) => {
-    var database = clientObject.db("Ogha");
-    // database.collection("")
 
-    database
-      .collection("StaffManage")
-      .find({ UserType: type })
-      .toArray()
-      .then((documents) => {
-        res.send(documents);
-        res.end();
-      });
-  });
+app.get("/getStaff/:getData", async (req, res) => {
+  try {
+    const userType = parseInt(req.params.getData);
+    // Use the Mongoose model to find staff members by user type
+    const staffMembers = await staffManage.find({ UserType: userType }).exec();
+
+    res.send(staffMembers);
+  } catch (error) {
+    console.error("Error fetching staff members:", error);
+    res.status(500).send("Error fetching staff members");
+  } finally {
+    res.end();
+  }
 });
 
 // Get the category values
 
-app.get("/getcategory", (req, res) => {
-  mongoose.connect(connectionString).then((clientObject) => {
-    var database = clientObject.db("Ogha");
-    database
-      .collection("category")
-      .find({})
-      .toArray()
-      .then((documents) => {
-        res.send(documents);
-        res.end();
-      });
-  });
-});
+app.get("/getcategory", async (req, res) => {
+  try {
 
+    // Use the Mongoose model to find all categories
+    const categories = await category.find({}).exec();
+
+    res.send(categories);
+  } catch (error) {
+    console.error("Error fetching categories:", error);
+    res.status(500).send("Error fetching categories");
+  } finally {
+    res.end();
+  }
+});
 // Sending Mail functionality to one customer
 
 app.post("/sendmail", (req, res) => {
@@ -1245,9 +1250,11 @@ app.post("/sendmail", (req, res) => {
 
   transporter.sendMail(mailOptions, function (error, info) {
     if (error) {
-      console.log(error);
+      console.error("Error sending email:", error);
+      res.status(500).send("Error sending email");
     } else {
       console.log("Email sent: " + info.response);
+      res.status(200).send("Email sent successfully");
     }
   });
 });
@@ -1265,18 +1272,20 @@ app.post("/sendmail", (req, res) => {
 // });
 
 app.get("/getWalkinData/:phone", (req, res) => {
-  var phone = req.params.phone;
-  mongoose.connect(connectionString).then((clientObject) => {
-    var database = clientObject.db("Ogha");
-    database
-      .collection("leadsCapture")
-      .findOne({ phoneNumber: phone, IsActive: 1 })
-      .then((documents) => {
-        res.send(documents);
-        res.status();
-        res.end();
-      });
-  });
+  const phone = req.params.phone;
+
+  leadsCapture.findOne({ phoneNumber: phone, IsActive: 1 })
+    .then((document) => {
+      if (document) {
+        res.status(200).send(document);
+      } else {
+        res.status(404).send("Walkin data not found");
+      }
+    })
+    .catch((error) => {
+      console.error("Error fetching walkin data:", error);
+      res.status(500).send("Internal Server Error");
+    });
 });
 // Get method for  gym package
 
