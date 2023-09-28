@@ -765,18 +765,14 @@ app.get("/getpackages", async (req, res) => {
 
 // Post method for packages
 
-app.post("/addpackges", async (req, res) => {
+app.post("/addpackages", async (req, res) => {
   try {
-    const clientObject = await mongoose.connect(connectionString);
-    const database = clientObject.db("Ogha");
+    // Find the last document to determine the new ID
+    const lastPackage = await packageManagement.findOne({}, {}, { sort: { id: -1 } });
+    const newId = lastPackage ? lastPackage.id + 1 : 1;
 
-    const lastdocuments = await database
-      .collection("packageManagement")
-      .findOne({}, { sort: { id: -1 } });
-    const lastId = lastdocuments ? lastdocuments.id : 0;
-    const newId = lastId + 1;
-
-    const packages = {
+    // Create a new package object based on request data
+    const newPackage = new packageManagement({
       id: newId,
       img: req.body.packageImage,
       packageName: req.body.packageName,
@@ -787,126 +783,131 @@ app.post("/addpackges", async (req, res) => {
       CreatedOn: new Date(req.body.createdOn),
       IsActive: 1,
       createdBy: parseInt(req.body.createdBy),
-    };
+    });
 
-    const commaSeparatedDescription = convertHtmlDescriptionToCommaSeparated(
-      req.body.description
-    );
-    packages.description = commaSeparatedDescription;
+    // Convert HTML description to comma-separated format
+    const commaSeparatedDescription = convertHtmlDescriptionToCommaSeparated(req.body.description);
+    newPackage.description = commaSeparatedDescription;
 
-    const result = await database
-      .collection("packageManagement")
-      .insertOne(packages);
+    // Save the new package to the database
+    await newPackage.save();
+
     console.log("Package Added");
     res.redirect("/packagegrid");
   } catch (error) {
     console.error("Error adding package:", error);
-    res.status(500).send("Error adding package");
-  } finally {
-    res.end();
+    res.status(500).json({ error: "An error occurred while adding the package" });
   }
 });
 
 // Edit Package Details
 
-app.get("/getPackageDetails/:id", (req, res) => {
-  var id = parseInt(req.params.id);
-  mongoose.connect(connectionString).then((clientObject) => {
-    var database = clientObject.db("Ogha");
-    database
-      .collection("packageManagement")
-      .find({ id: id })
-      .toArray()
-      .then((documents) => {
-        res.send(documents);
-        res.end();
-      });
-  });
+app.get("/getPackageDetails/:id", async (req, res) => {
+  try {
+    const id = parseInt(req.params.id);
+
+    // Find the package details by ID
+    const packageDetails = await packageManagement.find({ id: id }).exec();
+
+    res.send(packageDetails);
+  } catch (error) {
+    console.error("Error retrieving package details:", error);
+    res.status(500).json({ error: "An error occurred" });
+  }
 });
 
 //  Update method for package management.
 
-app.put("/updatePackage/:id", (req, res) => {
-  const id = parseInt(req.params.id);
-  const commaSeparatedDescription = convertHtmlDescriptionToCommaSeparated(
-    req.body.description
-  );
-  const findQuery = { id: id };
-  const updateQuery = {
-    $set: {
+app.put("/updatePackage/:id", async (req, res) => {
+  try {
+    const id = parseInt(req.params.id);
+    const commaSeparatedDescription = convertHtmlDescriptionToCommaSeparated(req.body.description);
+    const findQuery = { id: id };
+
+    const update = {
       img: req.body.packageImage,
       packageName: req.body.packageName,
-      cost: req.body.packageCost,
+      cost: parseFloat(req.body.packageCost),
       description: commaSeparatedDescription,
       duration: req.body.packageDuration,
       forService: req.body.service,
       modifiedOn: new Date(req.body.createdOn),
       modifiedBy: parseInt(req.body.createdBy),
-    },
-  };
+    };
 
-  mongoose.connect(connectionString).then((clientObject) => {
-    var database = clientObject.db("Ogha");
-    database
-      .collection("packageManagement")
-      .updateOne(findQuery, updateQuery)
-      .then((result) => {
-        console.log("Package Updated");
-        res.end();
-      });
-  });
+    // Update the package using Mongoose
+    await packageManagement.findOneAndUpdate(findQuery, update);
+
+    console.log("Package Updated");
+    res.end();
+  } catch (error) {
+    console.error("Error updating package:", error);
+    res.status(500).send("Error updating package");
+  }
 });
 
+
 // Delete (Put ) method for Package
-app.put("/deletePackage/:id", (req, res) => {
-  var id = parseInt(req.params.id);
+app.put("/deletePackage/:id", async (req, res) => {
+  try {
+    const id = parseInt(req.params.id);
+    const findQuery = { id: id };
+    const updateQuery = { $set: { IsActive: req.body.IsActive } };
 
-  mongoose.connect(connectionString).then((clientObject) => {
-    var database = clientObject.db("Ogha");
-    var findQuery = { id: id };
-    var updateQuery = { $set: { IsActive: req.body.IsActive } };
+    // Update the package to set IsActive to the provided value
+    await packageManagement.findOneAndUpdate(findQuery, updateQuery);
 
-    database
-      .collection("packageManagement")
-      .updateOne(findQuery, updateQuery)
-      .then((result) => {
-        res.send("Package Deleted Successfully");
-        res.redirect("/usermanage");
-        res.end();
-      });
-  });
+    res.send("Package Deleted Successfully");
+  } catch (error) {
+    console.error("Error deleting package:", error);
+    res.status(500).send("Error deleting package");
+  } finally {
+    res.redirect("/usermanage");
+    res.end();
+  }
 });
 
 // Display Gym Package
-app.get("/getGymPackage", (req, res) => {
-  mongoose.connect(connectionString).then((clientObject) => {
-    var database = clientObject.db("Ogha");
-    database
-      .collection("packageManagement")
-      .find({ forService: "3", IsActive: 1})
-      .toArray()
-      .then((documents) => {
-        res.send(documents);
-        res.end();
-      });
-  });
+app.get("/getGymPackage", async (req, res) => {
+  try {
+    // Connect to the database
+    const clientObject = await mongoose.connect(connectionString);
+    const database = clientObject.db("Ogha");
+
+    // Retrieve gym packages that are active and for the service with ID 3
+    const gymPackages = await packageManagement.find({ forService: "3", IsActive: 1 });
+
+    // Send the retrieved gym packages as the response
+    res.send(gymPackages);
+  } catch (error) {
+    console.error("Error retrieving gym packages:", error);
+    res.status(500).send("Error retrieving gym packages");
+  } finally {
+    res.end();
+  }
 });
 
 //  Display packages according to category
 
-app.get("/getCategorywisePackage/:type", (req, res) => {
-  var type = req.params.type;
+app.get("/getCategorywisePackage/:type", async (req, res) => {
+  try {
+    const type = req.params.type;
 
-  mongoose.connect(connectionString).then((clientObject) => {
-    var database = clientObject.db("Ogha");
-    database
-      .collection("packageManagement")
-      .find({ forService: type, IsActive: 1 })
-      .toArray()
-      .then((documents) => {
-        res.send(documents);
-      });
-  });
+    // Connect to the database
+    const clientObject = await mongoose.connect(connectionString);
+    const database = clientObject.db("Ogha");
+
+    // Retrieve category-wise packages that are active
+    const categoryWisePackages = await packageManagement.find({ forService: type, IsActive: 1 });
+
+    // Send the retrieved packages as the response
+    res.send(categoryWisePackages);
+  } catch (error) {
+    console.error("Error retrieving category-wise packages:", error);
+    res.status(500).send("Error retrieving category-wise packages");
+  } finally {
+    res.end();
+  }
 });
 
 // get package  data by type and id
