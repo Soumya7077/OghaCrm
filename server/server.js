@@ -344,24 +344,22 @@ app.get("/leadscapture/:id", async (req, res) => {
 });
 
 
-app.get("/leadscaptureforedit/:id", async (req, res) => {
-  try {
-    const EditId = parseInt(req.params.id);
+router.get("/leadscaptureforedit/:id", async (req, res) => {
+  const editId = parseInt(req.params.id);
 
-    const [leadDetails, followupDetails] = await Promise.all([
-      leadsCapture.find({ id: EditId }).exec(),
-      leadsFollowup.find({ leadId: EditId }).exec(),
-    ]);
+  try {
+    const result1 = await leadsCapture.find({ id: editId }).exec();
+    const result2 = await leadsFollowup.find({ leadId: editId }).exec();
 
     const combinedResults = {
-      leadsCapture: leadDetails,
-      leadsFollowup: followupDetails,
+      leadsCapture: result1,
+      leadsFollowup: result2,
     };
 
     res.send(combinedResults);
-  } catch (error) {
-    console.error("Error retrieving lead details:", error);
-    res.status(500).json({ error: "An error occurred" });
+  } catch (err) {
+    console.error(err);
+    res.status(500).send("Internal Server Error");
   }
 });
 
