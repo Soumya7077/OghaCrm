@@ -1021,7 +1021,7 @@ app.put("/deletePromotion/:id", async (req, res) => {
 
     // Create an update object to set IsActive based on the request body
     const updateObject = {
-      $set: { IsActive: req.body.IsActive },
+      $set: { IsActive: 0 },
     };
 
     // Update the promotion using Mongoose

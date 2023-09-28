@@ -43,9 +43,10 @@ const PromotionGrid = () => {
                 method:'put',
                 url:`https://ogha.onrender.com/deletePromotion/${promotionId}`,
                 data:{IsActive:0}
-            }).then(
-                window.location.reload()
-            )
+            }).then(res => {
+                console.log(res.data);
+                window.location.reload();
+            });
         }
         console.log(promotionId);
     }
