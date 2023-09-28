@@ -188,7 +188,7 @@ const AddLead = () => {
      
   useEffect(() => {
     axios.get(`https://ogha.onrender.com/leadscaptureforedit/${edit}`).then((res) => {  
-
+        console.log(res.data);
       setFormData({
         fullName: res.data.leadsCapture[0].fullName || "",
         phoneNumber: res.data.leadsCapture[0].phoneNumber || "",
