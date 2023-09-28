@@ -1290,49 +1290,40 @@ app.get("/getWalkinData/:phone", (req, res) => {
 // Get method for  gym package
 
 app.get("/gympackages", (req, res) => {
-  mongoose.connect(connectionString).then((clientObject) => {
-    var database = clientObject.db("Ogha");
-    database
-      .collection("packageManagement")
-      .find({ IsActive: 1, forService: "3" })
-      .toArray()
-      .then((documents) => {
-        res.send(documents);
-        res.end();
-      });
-  });
+  packageManagement.find({ IsActive: 1, forService: "3" })
+    .then((documents) => {
+      res.send(documents);
+    })
+    .catch((error) => {
+      console.error("Error fetching gym packages:", error);
+      res.status(500).send("Internal Server Error");
+    });
 });
 
 // Get method for  Spa package
 
 app.get("/spapackages", (req, res) => {
-  mongoose.connect(connectionString).then((clientObject) => {
-    var database = clientObject.db("Ogha");
-    database
-      .collection("packageManagement")
-      .find({ IsActive: 1, forService: "4" })
-      .toArray()
-      .then((documents) => {
-        res.send(documents);
-        res.end();
-      });
-  });
+  packageManagement.find({ IsActive: 1, forService: "4" })
+    .then((documents) => {
+      res.send(documents);
+    })
+    .catch((error) => {
+      console.error("Error fetching spa packages:", error);
+      res.status(500).send("Internal Server Error");
+    });
 });
 
 //Get Method for salon package
 
 app.get("/salonpackages", (req, res) => {
-  mongoose.connect(connectionString).then((clientObject) => {
-    var database = clientObject.db("Ogha");
-    database
-      .collection("packageManagement")
-      .find({ IsActive: 1, forService: "5" })
-      .toArray()
-      .then((documents) => {
-        res.send(documents);
-        res.end();
-      });
-  });
+  packageManagement.find({ IsActive: 1, forService: "5" })
+    .then((documents) => {
+      res.send(documents);
+    })
+    .catch((error) => {
+      console.error("Error fetching salon packages:", error);
+      res.status(500).send("Internal Server Error");
+    });
 });
 
 //Get Method for aesthetic packages
