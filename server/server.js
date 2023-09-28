@@ -137,8 +137,7 @@ const paymentSchema = new mongoose.Schema({
 
 
 const promotionSchema = new mongoose.Schema({
-    id: {type: Number,
-    unique: true,},
+    id: { type: Number, unique: true },
     promotionName: String,
     promotionDate: Date,
     descriptionEmail: String,
