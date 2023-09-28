@@ -13,6 +13,17 @@ mongoose.connect(connectionString, {
   dbName: 'Ogha',
 });
 
+var app = express();
+app.use(cors());
+app.use(bodyParser.json({ limit: "50mb" }));
+app.use(
+  express.urlencoded({
+    extended: true,
+  })
+);
+
+app.use(express.json());
+
 const db = mongoose.connection;
 // Handle connection events
 db.on("connected", () => {
@@ -168,16 +179,7 @@ const payment = mongoose.model("payment", paymentSchema, "payment");
 const promotionManage = mongoose.model("promotionManagement", promotionSchema, "promotionManagement");
 const subscriber = mongoose.model("subscriber", subscriberSchema, "subscriber");
 
-var app = express();
-app.use(cors());
-app.use(bodyParser.json({ limit: "50mb" }));
-app.use(
-  express.urlencoded({
-    extended: true,
-  })
-);
 
-app.use(express.json());
 
 function convertHtmlDescriptionToCommaSeparated(htmlDescription) {
   const $ = cheerio.load(htmlDescription);
