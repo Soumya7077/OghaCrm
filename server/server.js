@@ -913,10 +913,10 @@ app.get("/getCategorywisePackage/:type", async (req, res) => {
 app.post("/addpromotion", async (req, res) => {
   try {
     // Find the last promotion to determine the new ID
-    const lastPromotion = await promotionManage.findOne({}, { sort: { id: -1 } });
+    const lastPromotion = await promotionManage.find({}, { sort: { id: -1 } });
     const newId = lastPromotion ? lastPromotion.id + 1 : 1;
 
-    console.log(lastPromotion,"===================");
+    console.log("=============================================", lastPromotion);
 
     // Create a new promotion object
     const promotion = new promotionManage({
