@@ -871,8 +871,8 @@ app.put("/deletePackage/:id", async (req, res) => {
 app.get("/getGymPackage", async (req, res) => {
   try {
     // Connect to the database
-    const clientObject = await mongoose.connect(connectionString);
-    const database = clientObject.db("Ogha");
+    // const clientObject = await mongoose.connect(connectionString);
+    // const database = clientObject.db("Ogha");
 
     // Retrieve gym packages that are active and for the service with ID 3
     const gymPackages = await packageManagement.find({ forService: "3", IsActive: 1 });
