@@ -611,7 +611,7 @@ app.put("/updateWalkin/:id", async (req, res) => {
 app.post("/addstaff", async (req, res) => {
   try {
     // Find the latest ID in the StaffManage collection
-    const lastStaff = await staffManage.findOne({}, { sort: { id: -1 } }).exec();
+    const lastStaff = await staffManage.findOne({}, { sort: { id: -1 } });
     const lastId = lastStaff ? lastStaff.id : 0;
     const newId = lastId + 1;
 
