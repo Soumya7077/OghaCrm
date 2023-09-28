@@ -1329,207 +1329,162 @@ app.get("/salonpackages", (req, res) => {
 //Get Method for aesthetic packages
 
 app.get("/aestheticpackages", (req, res) => {
-  mongoose.connect(connectionString).then((clientObject) => {
-    var database = clientObject.db("Ogha");
-    database
-      .collection("packageManagement")
-      .find({ IsActive: 1, forService: "6" })
-      .toArray()
-      .then((documents) => {
-        res.send(documents);
-        res.end();
-      });
-  });
+  packageManagement.find({ IsActive: 1, forService: "6" })
+    .then((documents) => {
+      res.send(documents);
+    })
+    .catch((error) => {
+      console.error("Error fetching aesthetic packages:", error);
+      res.status(500).send("Internal Server Error");
+    });
 });
 // Gym, Spa and Salon Get Method for subscriber
 
 app.get("/getSubscriber/:getData", (req, res) => {
-  var type = req.params.getData;
-  mongoose.connect(connectionString).then((clientObject) => {
-    var database = clientObject.db("Ogha");
-    // database.collection("")
-
-    database
-      .collection("subscriber")
-      .find({ subscriptionFor: type })
-      .toArray()
-      .then((documents) => {
-        res.send(documents);
-        res.end();
-      });
-  });
+  const type = req.params.getData;
+  subscriber.find({ subscriptionFor: type })
+    .then((documents) => {
+      res.send(documents);
+    })
+    .catch((error) => {
+      console.error("Error fetching subscribers:", error);
+      res.status(500).send("Internal Server Error");
+    });
 });
 
 // Get Assigned list according to id
 
 app.get("/assignedlist/:id", (req, res) => {
-  var id = parseInt(req.params.id);
-  var currentDate = new Date();
+  const id = parseInt(req.params.id);
+  const currentDate = new Date();
 
-  mongoose.connect(connectionString).then((clientObject) => {
-    var database = clientObject.db("Ogha");
-
-    database
-      .collection("subscriber")
-      .find({
-        userId: id,
-        startDate: { $gte: currentDate },
-      })
-      .toArray()
-      .then((documents) => {
-        res.send(documents);
-      })
-      .catch((err) => {
-        console.error(err);
-        res.status(500).send("Internal Server Error");
-      })
-      .finally(() => {
-        clientObject.close();
-      });
-  });
+  subscriber.find({
+    userId: id,
+    startDate: { $gte: currentDate },
+  })
+    .then((documents) => {
+      res.send(documents);
+    })
+    .catch((error) => {
+      console.error("Error fetching assigned subscribers:", error);
+      res.status(500).send("Internal Server Error");
+    });
 });
 
 // get the today schedule list
 
 app.get("/todayschedule/:id", (req, res) => {
-  var id = parseInt(req.params.id);
+  const id = parseInt(req.params.id);
+  const currentDate = new Date();
 
-  mongoose.connect(connectionString).then((clientObject) => {
-    var database = clientObject.db("Ogha");
-
-    database
-      .collection("subscriber")
-      .find({
-        userId: id,
-        endDate: { $gte: new Date() }, // Use $gte to find dates greater than or equal to the current date
-      })
-      .toArray()
-      .then((documents) => {
-        res.send(documents);
-        res.end();
-      });
-  });
+  subscriber.find({
+    userId: id,
+    endDate: { $gte: currentDate }, // Use $gte to find dates greater than or equal to the current date
+  })
+    .then((documents) => {
+      res.send(documents);
+    })
+    .catch((error) => {
+      console.error("Error fetching today's schedule:", error);
+      res.status(500).send("Internal Server Error");
+    });
 });
 
 // add a subscriber for payment
 
 app.post("/addsubscription", (req, res) => {
-  mongoose.connect(connectionString).then((clientObject) => {
-    var database = clientObject.db("Ogha");
-    database
-      .collection("payment")
-      .findOne({}, { sort: { id: -1 } })
-      .then((lastdocuments) => {
-        const lastid = lastdocuments ? lastdocuments.id : 0;
-        const newID = lastid + 1;
-
-        const subscriptionUser = {
-          id: newID,
-          userName: req.body.name,
-          phone: req.body.phone,
-          email: req.body.email,
-          packageId: parseInt(req.body.packageId),
-          packageName: req.body.packageName,
-          cost: req.body.packageCost,
-          service: req.body.service,
-          paymentStatus: req.body.paymentStatus,
-          endDate: new Date(req.body.endDate),
-          createdOn: new Date(req.body.createdOn),
-          createdBy: parseInt(req.body.createdBy),
-          IsActive: 1,
-        };
-
-        database
-          .collection("payment")
-          .insertOne(subscriptionUser)
-          .then((result) => {
-            console.log("Subscribed User Added");
-            console.log(subscriptionUser);
-            res.redirect("/account");
-            res.end();
-          });
-      });
+  const subscriptionUser = new payment({
+    userName: req.body.name,
+    phone: req.body.phone,
+    email: req.body.email,
+    packageId: parseInt(req.body.packageId),
+    packageName: req.body.packageName,
+    cost: req.body.packageCost,
+    service: req.body.service,
+    paymentStatus: req.body.paymentStatus,
+    endDate: new Date(req.body.endDate),
+    createdOn: new Date(req.body.createdOn),
+    createdBy: parseInt(req.body.createdBy),
+    IsActive: 1,
   });
+
+  subscriptionUser.save()
+    .then((result) => {
+      console.log("Subscribed User Added");
+      console.log(subscriptionUser);
+      res.redirect("/account");
+    })
+    .catch((error) => {
+      console.error("Error adding subscribed user:", error);
+      res.status(500).send("Internal Server Error");
+    });
 });
 
 //  Get Payment Method
 
 app.get("/getCustomerList", (req, res) => {
-  mongoose.connect(connectionString).then((clientObject) => {
-    var database = clientObject.db("Ogha");
-    database
-      .collection("payment")
-      .find({})
-      .toArray()
-      .then((documents) => {
-        res.send(documents);
-        res.end();
-      });
-  });
+  payment.find({})
+    .then((documents) => {
+      res.send(documents);
+    })
+    .catch((error) => {
+      console.error("Error fetching customer list:", error);
+      res.status(500).send("Internal Server Error");
+    });
 });
 
 app.get("/getCustomerListById/:id", (req, res) => {
-  var id = parseInt(req.params.id);
-  mongoose.connect(connectionString).then((clientObject) => {
-    var database = clientObject.db("Ogha");
-    database
-      .collection("payment")
-      .findOne({ id: id })
-      .then((documents) => {
-        res.send(documents);
-        res.end();
-      });
-  });
+  const id = parseInt(req.params.id);
+
+  payment.findOne({ id: id })
+    .then((document) => {
+      if (document) {
+        res.status(200).send(document);
+      } else {
+        res.status(404).send("Customer not found");
+      }
+    })
+    .catch((error) => {
+      console.error("Error fetching customer by ID:", error);
+      res.status(500).send("Internal Server Error");
+    });
 });
 
 app.post("/saveattendence", (req, res) => {
-  mongoose.connect(connectionString).then((clientObject) => {
-    var database = clientObject.db("Ogha");
-    database
-      .collection("customerAttendence")
-      .findOne({}, { sort: { id: -1 } })
-      .then((lastdocuments) => {
-        const lastid = lastdocuments ? lastdocuments.id : 0;
-        const newID = lastid + 1;
-
-        const customerAttendence = {
-          id: parseInt(req.body.customerId),
-          customerName: req.body.customerName,
-          phone: req.body.phoneNo,
-          email: req.body.email,
-          date: new Date(req.body.date),
-          intime: req.body.intime,
-          outtime: req.body.outtime,
-          remarks: req.body.remarks,
-          createdOn: new Date(req.body.createdOn),
-        };
-
-        database
-          .collection("customerAttendence")
-          .insertOne(customerAttendence)
-          .then((result) => {
-            console.log("Customer Attendence Added");
-            res.redirect("/account");
-            res.end();
-          });
-      });
+  const newCustomerAttendance = new customerAttendence({
+    id: parseInt(req.body.customerId),
+    customerName: req.body.customerName,
+    phone: req.body.phoneNo,
+    email: req.body.email,
+    date: new Date(req.body.date),
+    intime: req.body.intime,
+    outtime: req.body.outtime,
+    remarks: req.body.remarks,
+    createdOn: new Date(req.body.createdOn),
   });
+
+  newCustomerAttendance.save()
+    .then((result) => {
+      console.log("Customer Attendance Added");
+      res.redirect("/account");
+    })
+    .catch((error) => {
+      console.error("Error adding customer attendance:", error);
+      res.status(500).send("Error adding customer attendance");
+    });
 });
 
 app.get("/getcustomerAttendence/:id", (req, res) => {
-  var id = parseInt(req.params.id);
+  const id = parseInt(req.params.id);
 
-  mongoose.connect(connectionString).then((clientObject) => {
-    var database = clientObject.db("Ogha");
-    database
-      .collection("customerAttendence")
-      .find({ id: id })
-      .toArray()
-      .then((documents) => {
-        res.send(documents);
-        res.end();
-      });
-  });
+  customerAttendence.find({ id: id })
+    .then((documents) => {
+      res.send(documents);
+    })
+    .catch((error) => {
+      console.error("Error fetching customer attendance:", error);
+      res.status(500).send("Internal Server Error");
+    });
 });
 
 // -----------------------------------------------------------------------------------------------------------//
@@ -1539,20 +1494,29 @@ app.get("/getcustomerAttendence/:id", (req, res) => {
 // Subscriber Reports
 app.get("/getsubscriberreport", async (req, res) => {
   try {
-    const fromdate = new Date(req.query.fromdate);
-    const todate = new Date(req.query.todate);
-    const clientObject = await mongoose.connect(connectionString);
-    const database = clientObject.db("Ogha");
-    const collection = database.collection("subscriber");
+    const fromDateString = req.query.fromdate;
+    const toDateString = req.query.todate;
 
-    const query = {
+    // Validate date strings
+    if (!fromDateString || !toDateString) {
+      return res.status(400).json({ error: "Both fromdate and todate are required." });
+    }
+
+    const fromDate = new Date(fromDateString);
+    const toDate = new Date(toDateString);
+
+    if (isNaN(fromDate) || isNaN(toDate)) {
+      return res.status(400).json({ error: "Invalid date format. Please provide dates in a valid format." });
+    }
+
+    // Use your Mongoose model to query the database
+    const result = await subscriber.find({
       startDate: {
-        $gte: fromdate,
-        $lte: todate,
+        $gte: fromDate,
+        $lte: toDate,
       },
-    };
+    });
 
-    const result = await collection.find(query).toArray();
     res.send(result);
   } catch (error) {
     console.error("Error:", error);
@@ -1563,30 +1527,38 @@ app.get("/getsubscriberreport", async (req, res) => {
 // Payment Report
 app.get("/getpaymentreport", async (req, res) => {
   try {
-    const fromdate = new Date(req.query.fromdate);
-    const todate = new Date(req.query.todate);
+    const fromDateString = req.query.fromdate;
+    const toDateString = req.query.todate;
     const paymentStatus = req.query.paymentStatus;
-    console.log(paymentStatus, fromdate, todate);
 
-    const clientObject = await mongoose.connect(connectionString);
-    const database = clientObject.db("Ogha");
-    const collection = database.collection("payment");
+    // Validate date strings and paymentStatus
+    if (!fromDateString || !toDateString || !paymentStatus) {
+      return res.status(400).json({ error: "fromdate, todate, and paymentStatus are required." });
+    }
 
-    const query = {
+    const fromDate = new Date(fromDateString);
+    const toDate = new Date(toDateString);
+
+    if (isNaN(fromDate) || isNaN(toDate)) {
+      return res.status(400).json({ error: "Invalid date format. Please provide dates in a valid format." });
+    }
+
+    // Use your Mongoose model to query the database
+    const result = await payment.find({
       createdOn: {
-        $gte: fromdate,
-        $lte: todate,
+        $gte: fromDate,
+        $lte: toDate,
       },
       paymentStatus: paymentStatus,
-    };
+    });
 
-    const result = await collection.find(query).toArray();
     res.send(result);
   } catch (error) {
     console.error("Error:", error);
     res.status(500).json({ error: "An error occurred while fetching data." });
   }
 });
+
 
 app.listen(5050);
 console.log(`Server started at : https://ogha.onrender.com`);
