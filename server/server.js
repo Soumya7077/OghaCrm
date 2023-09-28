@@ -344,7 +344,7 @@ app.get("/leadscapture/:id", async (req, res) => {
 });
 
 
-router.get("/leadscaptureforedit/:id", async (req, res) => {
+app.get("/leadscaptureforedit/:id", async (req, res) => {
   const editId = parseInt(req.params.id);
 
   try {
